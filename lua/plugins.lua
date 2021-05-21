@@ -15,6 +15,11 @@ return require('packer').startup(function(use)
     requires = {
       'nvim-lua/plenary.nvim'
     },
+    config = function()
+      require('nvim-reload').post_reload_hook = function()
+        require('feline').reset_highlights()
+      end
+    end
   }
 
   use {
@@ -126,6 +131,12 @@ return require('packer').startup(function(use)
   }
 
   use {
+    'rhysd/git-messenger.vim',
+    config = function()
+      vim.g.git_messenger_always_into_popup = true
+    end
+  }
+  use {
     'lewis6991/gitsigns.nvim',
     requires = {
       'nvim-lua/plenary.nvim'
@@ -135,7 +146,10 @@ return require('packer').startup(function(use)
     end
   }
 
-  use {'rhysd/git-messenger.vim'}
+  use {
+    'mboughaba/i3config.vim',
+    ft = {'i3config'}
+  }
 end, {
   display = {
     open_fn = require('packer.util').float,

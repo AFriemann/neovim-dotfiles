@@ -1,6 +1,7 @@
 require 'plugins'
 require 'keybindings'
 require 'options'
+require 'filetypes'
 
 local cmd = vim.api.nvim_command
 
@@ -8,12 +9,10 @@ function autosync()
   require('nvim-reload').Reload()
   cmd('PackerInstall')
   cmd('PackerCompile')
-  require('feline').reset_highlights()
 end
 
 function autoreload()
   require('nvim-reload').Reload()
-  require('feline').reset_highlights()
 end
 
 cmd('augroup AutoSync')
