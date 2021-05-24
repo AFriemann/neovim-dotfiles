@@ -22,3 +22,9 @@ cmd('augroup END')
 cmd('augroup AutoReload')
 cmd('autocmd BufWritePost init.lua lua autoreload()')
 cmd('augroup END')
+
+vim.g.tokyonight_style = "night"
+vim.g.tokyonight_italic_functions = true
+vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
+vim.g.tokyonight_transparent = true
+cmd('colorscheme tokyonight')

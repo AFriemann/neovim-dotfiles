@@ -29,23 +29,64 @@ return require('packer').startup(function(use)
     end,
   }
 
-  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+  use {
+    'ethanholz/nvim-lastplace',
+    config = function()
+      require('nvim-lastplace').setup {}
+    end
+  }
+
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    requires = {
+      'JoosepAlviste/nvim-ts-context-commentstring',
+    },
+    config = function()
+      require'nvim-treesitter.configs'.setup {
+        ensure_installed = {'lua'},
+        highlight = { enable = true, },
+        indent = { enable = true, },
+        incremental_selection = { enable = true, },
+        context_commentstring = {
+          enable = true
+        }
+      }
+    end,
+    run = ':TSUpdate',
+  }
 
 --  use "tversteeg/registers.nvim" -- this turns off syntax highlighting on reload
   use 'markonm/traces.vim'
 
-  use 'shaunsingh/moonlight.nvim'
-  require("moonlight").set()
+  use { 'folke/tokyonight.nvim', }
+
+--  TODO saving file causes treesitter integration to fail
+--  use {
+--    'lukas-reineke/indent-blankline.nvim',
+--    requires = 'nvim-treesitter/nvim-treesitter',
+--    branch = 'lua',
+--    config = function()
+--      local g = vim.g
+--
+--      g.indent_blankline_char = '┊'
+--      g.indent_blankline_use_treesitter = true
+--      g.indent_blankline_show_first_indent_level = false
+--      g.indent_blankline_show_current_context = true
+--      g.indent_blankline_context_highlight_list = {'Warning'}
+--      g.indent_blankline_context_patterns = {'class', 'function', 'method', 'if_statement'}
+--      g.indent_blankline_filetype_exclude = {'help'}
+--    end
+--  }
 
   use {
-    'lukas-reineke/indent-blankline.nvim'
+    'tpope/vim-commentary'
   }
 
   use {
     'famiu/feline.nvim',
     requires = "kyazdani42/nvim-web-devicons",
     config = function()
-      require('feline').setup()
+      require('feline').setup {}
     end
   }
 
@@ -62,13 +103,14 @@ return require('packer').startup(function(use)
     'neovim/nvim-lspconfig',
     requires = 'folke/lsp-colors.nvim',
     config = function()
+      local fn = vim.fn
       local lspconfig = require("lspconfig")
       local configs = require("lspconfig/configs")
 
-      vim.fn.sign_define('LspDiagnosticsSignError', {text='', texthl='LspDiagnosticsSignError',linehl='', numhl=''})
-      vim.fn.sign_define('LspDiagnosticsSignWarning', {text='', texthl='LspDiagnosticsSignWarning', linehl='', numhl=''})
-      vim.fn.sign_define('LspDiagnosticsSignInformation', {text='', texthl='LspDiagnosticsSignInformation', linehl='', numhl=''})
-      vim.fn.sign_define('LspDiagnosticsSignHint', {text='💡', texthl='LspDiagnosticsSignHint', linehl='', numhl=''})
+      fn.sign_define('LspDiagnosticsSignError', {text='', texthl='LspDiagnosticsSignError',linehl='', numhl=''})
+      fn.sign_define('LspDiagnosticsSignWarning', {text='', texthl='LspDiagnosticsSignWarning', linehl='', numhl=''})
+      fn.sign_define('LspDiagnosticsSignInformation', {text='', texthl='LspDiagnosticsSignInformation', linehl='', numhl=''})
+      fn.sign_define('LspDiagnosticsSignHint', {text='💡', texthl='LspDiagnosticsSignHint', linehl='', numhl=''})
 
       if not lspconfig.lualsp then
         configs.lualsp = {
@@ -85,18 +127,18 @@ return require('packer').startup(function(use)
 
       local on_attach = function(client, bufnr)
         local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-	local opts = { noremap=true, silent=true }
+        local opts = { noremap=true, silent=true }
 
-	buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+        buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
         buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
         buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
         buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
 
-	if client.resolved_capabilities.document_formatting then
+        if client.resolved_capabilities.document_formatting then
           buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
         end
 
-	if client.resolved_capabilities.document_range_formatting then
+        if client.resolved_capabilities.document_range_formatting then
           buf_set_keymap("v", "<leader>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
         end
       end
@@ -142,7 +184,7 @@ return require('packer').startup(function(use)
       'nvim-lua/plenary.nvim'
     },
     config = function()
-      require('gitsigns').setup()
+      require('gitsigns').setup {}
     end
   }
 
