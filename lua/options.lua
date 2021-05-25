@@ -1,4 +1,3 @@
-local vim = vim
 local api = vim.api
 
 local set_global = api.nvim_set_option
@@ -7,11 +6,6 @@ local set_buffer = api.nvim_buf_set_option
 
 -- magic numbers
 local indent = 2
-
--- global options
-local o = vim.o
-local bo = vim.bo
-local wo = vim.wo
 
 -- the gs
 vim.g.loaded_python_provider = 0
@@ -41,23 +35,3 @@ set_global('listchars', 'tab:▷ ,trail:·,extends:◣,precedes:◢,nbsp:○,eol
 set_window(0, 'list', true)
 set_window(0, 'number', true)
 set_window(0, 'relativenumber', true)
-
-
--- local fn = vim.fn
--- local g = vim.g
--- local o = vim.o
--- local wo = vim.wo
--- local bo = vim.bo
--- 
--- vim.cmd 'packadd paq-nvim'         -- Load package
--- local paq = require 'paq-nvim' . paq  -- Import module and bind `paq` function
--- paq { 'savq/paq-nvim', opt=true }  -- Let Paq manage itself
--- 
--- -- add packages
--- 
--- paq 'neovim/nvim-lspconfig'
--- 
--- local indent = 2
--- 
--- o.number  = true
--- wo.number = true

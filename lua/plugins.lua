@@ -152,6 +152,34 @@ return require('packer').startup(function(use)
         on_attach = on_attach,
         filetypes = {'terraform', 'tf', 'hcl',},
       }
+
+      lspconfig.groovyls.setup {
+        cmd = { "java", "-jar", "/usr/libexec/groovy-language-server/groovy-language-server.jar" },
+      }
+    end
+  }
+
+  use {
+    'hrsh7th/nvim-compe',
+    config = function()
+      require('compe').setup {
+        enable = true,
+        autocomplete = true,
+        debug = false,
+        min_length = 1,
+        preselect = 'enable',
+        throttle_time = 80,
+        source_timeout = 200,
+        incomplete_delay = 400,
+        max_abbr_width = 100,
+        max_kind_width = 100,
+        max_menu_width = 100,
+        documentation = true,
+        source = {
+          path = true,
+          nvim_lsp = true,
+        },
+      }
     end
   }
 
