@@ -55,28 +55,10 @@ return require('packer').startup(function(use)
     run = ':TSUpdate',
   }
 
---  use "tversteeg/registers.nvim" -- this turns off syntax highlighting on reload
-  use 'markonm/traces.vim'
+  use { 'tpope/vim-surround' }
+  use { 'markonm/traces.vim' }
 
   use { 'folke/tokyonight.nvim', }
-
---  TODO saving file causes treesitter integration to fail
---  use {
---    'lukas-reineke/indent-blankline.nvim',
---    requires = 'nvim-treesitter/nvim-treesitter',
---    branch = 'lua',
---    config = function()
---      local g = vim.g
---
---      g.indent_blankline_char = '┊'
---      g.indent_blankline_use_treesitter = true
---      g.indent_blankline_show_first_indent_level = false
---      g.indent_blankline_show_current_context = true
---      g.indent_blankline_context_highlight_list = {'Warning'}
---      g.indent_blankline_context_patterns = {'class', 'function', 'method', 'if_statement'}
---      g.indent_blankline_filetype_exclude = {'help'}
---    end
---  }
 
   use {
     'tpope/vim-commentary'
@@ -122,7 +104,6 @@ return require('packer').startup(function(use)
       }
     end
   }
-
 
   use {
     'neovim/nvim-lspconfig',
@@ -192,16 +173,6 @@ return require('packer').startup(function(use)
     end
   }
 
-
-  -- TODO
-  -- not working :(
-  -- use {
-  --   "folke/todo-comments.nvim",
-  --   config = function()
-  --     require("todo-comments").setup {}
-  --   end
-  -- }
-
   use {
     "folke/trouble.nvim",
     requires = "kyazdani42/nvim-web-devicons",
@@ -216,6 +187,7 @@ return require('packer').startup(function(use)
       vim.g.git_messenger_always_into_popup = true
     end
   }
+
   use {
     'lewis6991/gitsigns.nvim',
     requires = {
@@ -230,6 +202,58 @@ return require('packer').startup(function(use)
     'mboughaba/i3config.vim',
     ft = {'i3config'}
   }
+
+  -- TODO
+  -- not working :{
+  -- use {
+  --   "folke/todo-comments.nvim",
+  --   config = function()
+  --     require("todo-comments").setup {}
+  --   end
+  -- }
+
+-- got to take a look at this eventually
+--  use {
+--    'nvim-telescope/telescope.nvim',
+--    requires = {
+--      'nvim-lua/popup.nvim',
+--      'nvim-lua/plenary.nvim',
+--      'kyazdani42/nvim-web-devicons',
+--    },
+--    config = function()
+--      require('telescope').setup {}
+--    end
+--  }
+--
+--  use {
+--    "blackCauldron7/surround.nvim",
+--    config = function()
+--      require("surround").setup {}
+--    end
+--  }
+
+-- TODO: this turns off syntax highlighting on reload
+--  use { "tversteeg/registers.nvim" }
+
+--  TODO: saving file causes treesitter integration to fail
+--  use {
+--    'lukas-reineke/indent-blankline.nvim',
+--    requires = 'nvim-treesitter/nvim-treesitter',
+--    branch = 'lua',
+--    config = function()
+--      local g = vim.g
+--
+--      g.indent_blankline_char = '┊'
+--      g.indent_blankline_use_treesitter = true
+--      g.indent_blankline_show_first_indent_level = false
+--      g.indent_blankline_show_current_context = true
+--      g.indent_blankline_context_highlight_list = {'Warning'}
+--      g.indent_blankline_context_patterns = {'class', 'function', 'method', 'if_statement'}
+--      g.indent_blankline_filetype_exclude = {'help'}
+--    end
+--  }
+
+
 end, {
   display = {
     open_fn = require('packer.util').float,
