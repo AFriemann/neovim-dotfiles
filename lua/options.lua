@@ -11,6 +11,9 @@ local indent = 2
 vim.g.loaded_python_provider = 0
 vim.g.python3_host_prog = '/usr/bin/python3'
 
+-- completion
+set_global('shortmess', vim.o.shortmess .. "c")
+set_global('completeopt', 'menuone,noinsert,noselect')
 -- visual
 set_global('termguicolors', true)
 -- search
@@ -35,3 +38,4 @@ set_global('listchars', 'tab:▷ ,trail:·,extends:◣,precedes:◢,nbsp:○,eol
 set_window(0, 'list', true)
 set_window(0, 'number', true)
 set_window(0, 'relativenumber', true)
+
