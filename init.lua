@@ -16,11 +16,12 @@ function autoreload()
 end
 
 cmd('augroup AutoSync')
-cmd('autocmd BufWritePost plugins.lua lua autosync()')
+cmd('autocmd BufWritePost ~/.config/nvim/lua/plugins.lua lua autosync()')
 cmd('augroup END')
 
 cmd('augroup AutoReload')
-cmd('autocmd BufWritePost init.lua lua autoreload()')
+cmd('autocmd BufWritePost ~/.config/nvim/init.lua lua autoreload()')
+cmd('autocmd BufWritePost ~/.config/nvim/lua/*.lua lua autoreload()')
 cmd('augroup END')
 
 vim.g.tokyonight_style = "night"
