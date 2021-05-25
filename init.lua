@@ -15,9 +15,9 @@ function autoreload()
   require('nvim-reload').Reload()
 end
 
-cmd('augroup AutoSync')
-cmd('autocmd BufWritePost ~/.config/nvim/lua/plugins.lua lua autosync()')
-cmd('augroup END')
+--cmd('augroup AutoSync')
+--cmd('autocmd BufWritePost ~/.config/nvim/lua/plugins.lua lua autosync()')
+--cmd('augroup END')
 
 cmd('augroup AutoReload')
 cmd('autocmd BufWritePost ~/.config/nvim/init.lua lua autoreload()')
