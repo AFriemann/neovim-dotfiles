@@ -38,31 +38,38 @@ return require('packer').startup(function(use)
 
   use {
     'nvim-treesitter/nvim-treesitter',
-    requires = {
-      'JoosepAlviste/nvim-ts-context-commentstring',
-    },
     config = function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {'lua'},
         highlight = { enable = true, },
         indent = { enable = true, },
         incremental_selection = { enable = true, },
-        context_commentstring = {
-          enable = true
-        }
       }
     end,
     run = ':TSUpdate',
   }
 
+  use { 
+    'JoosepAlviste/nvim-ts-context-commentstring',
+    requires = {
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require'nvim-treesitter.configs'.setup {
+        context_commentstring = {
+          enable = true
+        }
+      }
+    end
+  }
+
   use { 'tpope/vim-surround' }
+  use { 'ggandor/lightspeed.nvim' }
   use { 'markonm/traces.vim' }
 
   use { 'folke/tokyonight.nvim', }
 
-  use {
-    'tpope/vim-commentary'
-  }
+  use { 'tpope/vim-commentary' }
 
   use {
     'famiu/feline.nvim',
@@ -157,7 +164,7 @@ return require('packer').startup(function(use)
         end
       end
 
-      local servers = { "pyls", "bashls", "jsonls", "groovyls", "dockerls", "lualsp", "yamlls" }
+      local servers = { "pylsp", "bashls", "jsonls", "groovyls", "dockerls", "lualsp", "yamlls" }
       for _, lsp in ipairs(servers) do
         lspconfig[lsp].setup { on_attach = on_attach }
       end
@@ -203,14 +210,10 @@ return require('packer').startup(function(use)
     ft = {'i3config'}
   }
 
-  -- TODO
-  -- not working :{
-  -- use {
-  --   "folke/todo-comments.nvim",
-  --   config = function()
-  --     require("todo-comments").setup {}
-  --   end
-  -- }
+  use {
+    'camspiers/snap',
+    rocks = {'fzy'},
+  }
 
 -- got to take a look at this eventually
 --  use {
@@ -225,13 +228,6 @@ return require('packer').startup(function(use)
 --    end
 --  }
 --
---  use {
---    "blackCauldron7/surround.nvim",
---    config = function()
---      require("surround").setup {}
---    end
---  }
-
 -- TODO: this turns off syntax highlighting on reload
 --  use { "tversteeg/registers.nvim" }
 
@@ -252,7 +248,6 @@ return require('packer').startup(function(use)
 --      g.indent_blankline_filetype_exclude = {'help'}
 --    end
 --  }
-
 
 end, {
   display = {
