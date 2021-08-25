@@ -1,41 +1,22 @@
 local set_keymap = vim.api.nvim_set_keymap
 
-set_keymap('n', '<Tab>', ':tabnext<CR>', { noremap = true, silent = true })
-set_keymap('n', '<S-Tab>', ':tabprevious<CR>', { noremap = true, silent = true })
-
 set_keymap('n', 'n', 'nzz', { noremap = true, silent = false })
 set_keymap('n', 'N', 'Nzz', { noremap = true, silent = false })
 
-vim.api.nvim_set_keymap("n", "<leader>t", "<cmd>Trouble<cr>",
-  {silent = true, noremap = true}
-)
+set_keymap("n", "<leader>t", "<cmd>Trouble<cr>", {silent = true, noremap = true})
 
-local snap = require('snap')
+-- set_keymap('n', '<C-p>', '<cmd>Telescope find_files<CR>', { noremap = true, silent = false })
+-- set_keymap('n', '<C-g>', '<cmd>Telescope git_files<CR>', { noremap = true, silent = false })
+-- set_keymap('n', '<C-a>', '<cmd>Telescope lsp_code_actions<CR>', { noremap = true, silent = false })
+-- set_keymap('n', '<C-i>', '<cmd>Telescope lsp_definitions<CR>', { noremap = true, silent = false })
+set_keymap('n', '<leader>v', '<cmd>Telescope git_bcommits<CR>', { noremap = true, silent = false })
+set_keymap('n', '<leader>p', '<cmd>Telescope projects<CR>', { noremap = true, silent = false })
+set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<CR>', { noremap = true, silent = false })
+set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<CR>', { noremap = true, silent = false })
+set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<CR>', { noremap = true, silent = false })
+set_keymap('n', '<leader>fs', '<cmd>Telescope symbols<CR>', { noremap = true, silent = false })
+set_keymap('n', '<leader>fr', '<cmd>Telescope lsp_references<CR>', { noremap = true, silent = false })
+set_keymap('n', '<leader>fk', '<cmd>Telescope keymaps<CR>', { noremap = true, silent = false })
 
-snap.register.map({"n"}, {"<C-p>"}, function()
-  snap.run {
-    prompt = 'Files',
-    producer = snap.get('consumer.fzy')(snap.get('producer.ripgrep.file')),
-    select = snap.get('select.file').select,
-    multiselect = snap.get('select.file').multiselect,
-  } 
-end)
-
-snap.register.map({"n"}, {"<leader>f"}, function()
-  snap.run {
-    prompt = 'Git Files',
-    producer = snap.get('consumer.fzy')(snap.get('producer.git.file')),
-    select = snap.get('select.file').select,
-    multiselect = snap.get('select.file').multiselect,
-  } 
-end)
-
-snap.register.map({"n"}, {"<leader>g"}, function()
-  snap.run {
-    prompt = 'Grep',
-    producer = snap.get('consumer.limit')(10000, snap.get('producer.ripgrep.vimgrep')),
-    select = snap.get('select.vimgrep').select,
-    multiselect = snap.get('select.vimgrep').multiselect,
-    views = { snap.get('preview.vimgrep') }
-  } 
-end)
+set_keymap('n', '<Tab>', '<cmd>tabnext<CR>', { noremap = true, silent = true })
+set_keymap('n', '<S-Tab>', '<cmd>tabprevious<CR>', { noremap = true, silent = true })
