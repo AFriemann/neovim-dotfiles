@@ -68,12 +68,12 @@ return require('packer').startup(function(use)
     end,
   }
 
-  use({
-    'mvllow/modes.nvim',
-    config = function()
-      require('modes').setup()
-    end
-  })
+  -- use({
+  --   'mvllow/modes.nvim',
+  --   config = function()
+  --     require('modes').setup()
+  --   end
+  -- })
 
   use { 
     'JoosepAlviste/nvim-ts-context-commentstring',
@@ -128,9 +128,11 @@ return require('packer').startup(function(use)
       'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-nvim-lua',
       'neovim/nvim-lspconfig',
+      'hrsh7th/cmp-nvim-lsp',
       'onsails/lspkind-nvim',
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-path',
     },
     config = function()
       local cmp = require('cmp')
@@ -192,36 +194,12 @@ return require('packer').startup(function(use)
       require("nvim-autopairs").setup {}
 
       -- handle <CR> mapping with nvim-cmp
-      require("nvim-autopairs.completion.cmp").setup {
-        map_cr = true, --  map <CR> on insert mode
-        map_complete = true -- insert `(` when function/method is completed
-      }
+      -- require("nvim-autopairs.completion.cmp").setup {
+      --   map_cr = true, --  map <CR> on insert mode
+      --   map_complete = true -- insert `(` when function/method is completed
+      -- }
     end
   }
-
-  -- use {
-  --   'hrsh7th/nvim-compe',
-  --   config = function()
-  --     require('compe').setup {
-  --       enable = true,
-  --       autocomplete = true,
-  --       debug = false,
-  --       min_length = 1,
-  --       preselect = 'enable',
-  --       throttle_time = 80,
-  --       source_timeout = 200,
-  --       incomplete_delay = 400,
-  --       max_abbr_width = 100,
-  --       max_kind_width = 100,
-  --       max_menu_width = 100,
-  --       documentation = true,
-  --       source = {
-  --         path = true,
-  --         nvim_lsp = true,
-  --       },
-  --     }
-  --   end
-  -- }
 
   use {
     'neovim/nvim-lspconfig',
@@ -266,7 +244,7 @@ return require('packer').startup(function(use)
         end
       end
 
-      local servers = { "pylsp", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls" }
+      local servers = { "pylsp", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls", "tflint" }
       for _, lsp in ipairs(servers) do
         lspconfig[lsp].setup { on_attach = on_attach }
       end
