@@ -15,7 +15,6 @@ return require('packer').startup({function(use)
   --use { 'rebelot/kanagawa.nvim' }
 
   -- CATEGORY performance
-  use { 'vim-scripts/LargeFile' } -- TODO: not sure this actually works
   use {
     'antoinemadec/FixCursorHold.nvim',
     run = function()
@@ -37,6 +36,12 @@ return require('packer').startup({function(use)
     },
     config = function()
       require'nvim-tree'.setup {
+        auto_close = true,
+        open_on_tab = true,
+        hijack_unnamed_buffer_when_opening = true,
+        diagnostics = {
+          enable = true,
+        },
         view = {
           mappings = {
             custom_only = true,
@@ -145,7 +150,7 @@ return require('packer').startup({function(use)
       'nvim-treesitter/nvim-treesitter-textobjects',
       'windwp/nvim-ts-autotag',
       'andymass/vim-matchup',
-      'yioneko/nvim-yati',
+      --'yioneko/nvim-yati', TODO: this causes wrong indentation currently
     },
     run = ':TSUpdate',
     config = function()
@@ -153,7 +158,7 @@ return require('packer').startup({function(use)
         ensure_installed = {'bash', 'lua', 'hcl', 'go', 'python', 'rust'},
         highlight = { enable = true, },
         indent = { enable = true, },
-        yati = { enable = true },
+        --yati = { enable = true },
         incremental_selection = { enable = true, },
         matchup = {
           enable = true,
@@ -232,19 +237,20 @@ return require('packer').startup({function(use)
     },
     config = function()
       local lsp = require('lsp-zero')
+      local lspkind = require('lspkind')
+      local lspformat = require("lsp-format")
 
       lsp.preset('recommended')
       lsp.nvim_workspace()
 
       lsp.ensure_installed({
-        "pylsp", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls", "tflint"
+        "pyright", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls", "tflint"
       })
 
-      lsp.on_attach(function(client, bufnr)
-        require "lsp-format".on_attach(client)
+      lsp.on_attach(function(client)
+        lspformat.on_attach(client)
       end)
 
-      local lspkind = require('lspkind')
       lspkind.init {
         mode = "symbol_text",
         preset = 'default',
@@ -252,14 +258,22 @@ return require('packer').startup({function(use)
 
       lsp.setup_nvim_cmp({
         formatting = {
-          format = function(_, vim_item)
-            vim_item.kind = lspkind.presets.default[vim_item.kind]
-            return vim_item
-          end
+          format = lspkind.cmp_format(),
+        },
+        documentation = {
+          border = { '', '', '', ' ', '', '', '', ' ' }, -- remove the obnoxious borders
         }
       })
 
       lsp.setup()
+
+      vim.diagnostic.config({
+        virtual_text = true,
+        signs = true,
+        underline = true,
+        update_in_insert = true,
+        severity_sort = true,
+      })
     end
   }
 
@@ -276,22 +290,22 @@ return require('packer').startup({function(use)
     end
   }
 
-  use {
-    'RishabhRD/nvim-lsputils',
-    requires = {
-      'RishabhRD/popfix',
-    },
-    config = function()
-      vim.lsp.handlers['textDocument/codeAction'] = require'lsputil.codeAction'.code_action_handler
-      vim.lsp.handlers['textDocument/references'] = require'lsputil.locations'.references_handler
-      vim.lsp.handlers['textDocument/definition'] = require'lsputil.locations'.definition_handler
-      vim.lsp.handlers['textDocument/declaration'] = require'lsputil.locations'.declaration_handler
-      vim.lsp.handlers['textDocument/typeDefinition'] = require'lsputil.locations'.typeDefinition_handler
-      vim.lsp.handlers['textDocument/implementation'] = require'lsputil.locations'.implementation_handler
-      vim.lsp.handlers['textDocument/documentSymbol'] = require'lsputil.symbols'.document_handler
-      vim.lsp.handlers['workspace/symbol'] = require'lsputil.symbols'.workspace_handler
-    end
-  }
+  -- use {
+  --   'RishabhRD/nvim-lsputils',
+  --   requires = {
+  --     'RishabhRD/popfix',
+  --   },
+  --   config = function()
+  --     vim.lsp.handlers['textDocument/codeAction'] = require'lsputil.codeAction'.code_action_handler
+  --     vim.lsp.handlers['textDocument/references'] = require'lsputil.locations'.references_handler
+  --     vim.lsp.handlers['textDocument/definition'] = require'lsputil.locations'.definition_handler
+  --     vim.lsp.handlers['textDocument/declaration'] = require'lsputil.locations'.declaration_handler
+  --     vim.lsp.handlers['textDocument/typeDefinition'] = require'lsputil.locations'.typeDefinition_handler
+  --     vim.lsp.handlers['textDocument/implementation'] = require'lsputil.locations'.implementation_handler
+  --     vim.lsp.handlers['textDocument/documentSymbol'] = require'lsputil.symbols'.document_handler
+  --     vim.lsp.handlers['workspace/symbol'] = require'lsputil.symbols'.workspace_handler
+  --   end
+  -- }
 
   use {
     "folke/trouble.nvim",
@@ -331,12 +345,12 @@ return require('packer').startup({function(use)
     end
   }
 
-  use {
-    'f-person/git-blame.nvim',
-    config = function()
-      vim.g.gitblame_highlight_group = "Question"
-    end
-  }
+  -- use {
+  --   'f-person/git-blame.nvim',
+  --   config = function()
+  --     vim.g.gitblame_highlight_group = "Question"
+  --   end
+  -- }
 
   -- use {
   --   'tanvirtin/vgit.nvim',

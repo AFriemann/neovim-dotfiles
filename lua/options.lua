@@ -1,4 +1,3 @@
-local api = vim.api
 local opt = vim.opt
 
 -- magic numbers
