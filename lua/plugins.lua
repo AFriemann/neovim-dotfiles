@@ -207,68 +207,65 @@ return require('packer').startup({function(use)
   }
 
   use {
-    'hrsh7th/nvim-cmp',
+    'VonHeikemen/lsp-zero.nvim',
     requires = {
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-nvim-lua',
-      'neovim/nvim-lspconfig',
-      'hrsh7th/cmp-nvim-lsp',
-      'onsails/lspkind-nvim',
-      'L3MON4D3/LuaSnip',
-      'saadparwaiz1/cmp_luasnip',
-      'hrsh7th/cmp-path',
+      -- LSP Support
+      {'neovim/nvim-lspconfig'},
+      {'williamboman/nvim-lsp-installer'},
+      {'onsails/lspkind-nvim'},
+      {'folke/lsp-colors.nvim'},
+
+      -- Formatting
+      {'lukas-reineke/lsp-format.nvim'},
+
+      -- Autocompletion
+      {'hrsh7th/nvim-cmp'},
+      {'hrsh7th/cmp-buffer'},
+      {'hrsh7th/cmp-path'},
+      {'saadparwaiz1/cmp_luasnip'},
+      {'hrsh7th/cmp-nvim-lsp'},
+      {'hrsh7th/cmp-nvim-lua'},
+
+      -- Snippets
+      {'L3MON4D3/LuaSnip'},
+      {'rafamadriz/friendly-snippets'},
     },
     config = function()
-      local cmp = require('cmp')
-      local types = require('cmp.types')
-      local lspkind = require('lspkind')
+      local lsp = require('lsp-zero')
 
-      cmp.setup {
-        sources = {
-          { name = 'nvim_lsp' },
-          { name = 'buffer' },
-          { name = 'luasnip' },
-        },
-        snippet = {
-          expand = function(args)
-            require('luasnip').lsp_expand(args.body)
-          end,
-        },
-        completion = {
-          autocomplete = {
-            types.cmp.TriggerEvent.InsertEnter,
-            types.cmp.TriggerEvent.TextChanged,
-          },
-          completeopt = 'menu,menuone,noselect',
-          keyword_length = 1,
-        },
-        mapping = {
-          ['<C-p>'] = cmp.mapping.select_prev_item(),
-          ['<C-n>'] = cmp.mapping.select_next_item(),
-          ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.close(),
-          -- ['<CR>'] = cmp.mapping.confirm({
-          --   behavior = cmp.ConfirmBehavior.Replace,
-          --   select = true,
-          -- }),
-        },
+      lsp.preset('recommended')
+      lsp.nvim_workspace()
+
+      lsp.ensure_installed({
+        "pylsp", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls", "tflint"
+      })
+
+      lsp.on_attach(function(client, bufnr)
+        require "lsp-format".on_attach(client)
+      end)
+
+      local lspkind = require('lspkind')
+      lspkind.init {
+        mode = "symbol_text",
+        preset = 'default',
+      }
+
+      lsp.setup_nvim_cmp({
         formatting = {
           format = function(_, vim_item)
             vim_item.kind = lspkind.presets.default[vim_item.kind]
             return vim_item
           end
         }
-      }
+      })
 
-      vim.api.nvim_exec([[
-        augroup completion
-          autocmd!
-          autocmd FileType lua lua require('cmp').setup.buffer { sources = { name = 'nvim_lua' }, }
-        augroup end
-      ]], false)
+      lsp.setup()
     end
+  }
+
+  use {
+    'weilbith/nvim-code-action-menu',
+    cmd = 'CodeActionMenu',
   }
 
   use {
@@ -276,73 +273,6 @@ return require('packer').startup({function(use)
     after = "nvim-cmp",
     config = function()
       require("nvim-autopairs").setup {}
-    end
-  }
-
-  use {
-    'neovim/nvim-lspconfig',
-    requires = {
-      'folke/lsp-colors.nvim',
-      'onsails/lspkind-nvim',
-      'tjdevries/nlua.nvim',
-      'lukas-reineke/lsp-format.nvim'
-    },
-    config = function()
-      local fn = vim.fn
-      local lspconfig = require("lspconfig")
-      local configs = require("lspconfig/configs")
-
-      fn.sign_define('LspDiagnosticsSignError', {text='', texthl='LspDiagnosticsSignError',linehl='', numhl=''})
-      fn.sign_define('LspDiagnosticsSignWarning', {text='', texthl='LspDiagnosticsSignWarning', linehl='', numhl=''})
-      fn.sign_define('LspDiagnosticsSignInformation', {text='', texthl='LspDiagnosticsSignInformation', linehl='', numhl=''})
-      fn.sign_define('LspDiagnosticsSignHint', {text='💡', texthl='LspDiagnosticsSignHint', linehl='', numhl=''})
-
-      require('lspkind').init {
-        mode = "symbol_text",
-        preset = 'default',
-      }
-
-      local on_attach = function(client, bufnr)
-        require "lsp-format".on_attach(client)
-
-        local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-        local opts = { noremap=true, silent=true }
-
-        buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-        buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-        buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-        buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-        buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-        buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-        buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-
-        if client.resolved_capabilities.document_formatting then
-          buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-        end
-
-        if client.resolved_capabilities.document_range_formatting then
-          buf_set_keymap("v", "<leader>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
-        end
-      end
-
-      local servers = { "pylsp", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls", "tflint" }
-      for _, lsp in ipairs(servers) do
-        lspconfig[lsp].setup { on_attach = on_attach }
-      end
-
-      lspconfig.sumneko_lua.setup {
-        on_attach = on_attach,
-        cmd = {"lua-language-server"},
-      }
-
-      lspconfig.terraformls.setup {
-        on_attach = on_attach,
-        filetypes = {'terraform', 'tf', 'hcl',},
-      }
-
-      lspconfig.groovyls.setup {
-        cmd = { "java", "-jar", "/usr/libexec/groovy-language-server/groovy-language-server.jar" },
-      }
     end
   }
 
