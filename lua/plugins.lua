@@ -30,6 +30,14 @@ return require('packer').startup({function(use)
   use { 'machakann/vim-sandwich' }
 
   use {
+    'akinsho/bufferline.nvim',
+    requires = 'kyazdani42/nvim-web-devicons',
+    config = function ()
+      require("bufferline").setup {}
+    end
+  }
+
+  use {
     'kyazdani42/nvim-tree.lua',
     requires = {
       'kyazdani42/nvim-web-devicons', -- optional, for file icon
@@ -150,7 +158,7 @@ return require('packer').startup({function(use)
       'nvim-treesitter/nvim-treesitter-textobjects',
       'windwp/nvim-ts-autotag',
       'andymass/vim-matchup',
-      --'yioneko/nvim-yati', TODO: this causes wrong indentation currently
+      --'yioneko/nvim-yati', -- TODO: this causes wrong indentation currently
     },
     run = ':TSUpdate',
     config = function()

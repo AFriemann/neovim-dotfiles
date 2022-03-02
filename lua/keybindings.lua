@@ -11,5 +11,5 @@ set_keymap("n", "<leader>n", "<cmd>NvimTreeFindFile<cr>", {silent = true, norema
 set_keymap("n", "<leader>t", "<cmd>TroubleToggle<cr>", {silent = true, noremap = true})
 set_keymap("n", "<leader>ca", "<cmd>CodeActionMenu<cr>", {silent = true, noremap = true})
 
-set_keymap('n', '<Tab>', '<cmd>tabnext<CR>', { noremap = true, silent = true })
-set_keymap('n', '<S-Tab>', '<cmd>tabprevious<CR>', { noremap = true, silent = true })
+set_keymap('n', '<Tab>', '<cmd>BufferLineCycleNext<CR>', { noremap = true, silent = true })
+set_keymap('n', '<S-Tab>', '<cmd>BufferLineCyclePrevious<CR>', { noremap = true, silent = true })
