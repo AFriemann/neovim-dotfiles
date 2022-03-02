@@ -29,7 +29,7 @@ opt.syntax = 'off'
 opt.showmatch = true
 opt.colorcolumn = '120'
 opt.cursorline = true
--- opt.signcolumn = "number"
+opt.signcolumn = 'yes'
 -- search
 opt.smartcase = true
 opt.hlsearch = true
@@ -44,7 +44,7 @@ opt.clipboard = "unnamedplus"   -- copy/paste to system clipboard
 opt.mouse = "a"                 -- enable mouse support
 opt.history = 100               -- remember n lines in history
 opt.lazyredraw = true           -- faster scrolling
-opt.synmaxcol = 240             -- max column for syntax highlighting
+opt.synmaxcol = 2048            -- max column for syntax highlighting
 opt.breakindent = true          -- enable break indent
 opt.undofile = true             -- save undo history
 opt.updatetime = 250            -- decrease update time

@@ -1,28 +1,21 @@
 local fn = vim.fn
-local execute = vim.api.nvim_command
-
 local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
 
 if fn.empty(fn.glob(install_path)) > 0 then
-  fn.system({'git', 'clone', 'https://github.com/wbthomason/packer.nvim', install_path})
-  execute 'packadd packer.nvim'
+  packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+  --vim.api.nvim_command 'packadd packer.nvim'
 end
 
-return require('packer').startup(function(use)
+return require('packer').startup({function(use)
   use 'wbthomason/packer.nvim'
-  use 'kyazdani42/nvim-web-devicons'
-  use {
-    'famiu/nvim-reload',
-    requires = {
-      'nvim-lua/plenary.nvim'
-    },
-    config = function()
-      require('nvim-reload').post_reload_hook = function()
-        -- require('feline').reset_highlights()
-      end
-    end
-  }
 
+  -- CATEGORY colors
+  use { 'kyazdani42/nvim-web-devicons' }
+  use { 'folke/tokyonight.nvim' }
+  --use { 'rebelot/kanagawa.nvim' }
+
+  -- CATEGORY performance
+  use { 'vim-scripts/LargeFile' } -- TODO: not sure this actually works
   use {
     'antoinemadec/FixCursorHold.nvim',
     run = function()
@@ -30,10 +23,64 @@ return require('packer').startup(function(use)
     end,
   }
 
+  -- CATEGORY utility
+
+  -- sa[wrap] add
+  -- sr[wrap] replace
+  -- sd[wrap] delete
+  use { 'machakann/vim-sandwich' }
+
   use {
-    "ahmedkhalf/project.nvim",
+    'kyazdani42/nvim-tree.lua',
+    requires = {
+      'kyazdani42/nvim-web-devicons', -- optional, for file icon
+    },
     config = function()
-      require("project_nvim").setup {}
+      require'nvim-tree'.setup {
+        view = {
+          mappings = {
+            custom_only = true,
+            list = {
+              { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
+              --{ key = "<C-e>",                        action = "edit_in_place" },
+              --{ key = {"O"},                          action = "edit_no_picker" },
+              --{ key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
+              { key = "<C-v>",                        action = "vsplit" },
+              { key = "<C-x>",                        action = "split" },
+              { key = "<C-t>",                        action = "tabnew" },
+              { key = "<",                            action = "prev_sibling" },
+              { key = ">",                            action = "next_sibling" },
+              { key = "P",                            action = "parent_node" },
+              { key = "<BS>",                         action = "close_node" },
+              --{ key = "<Tab>",                        action = "preview" },
+              { key = "K",                            action = "first_sibling" },
+              { key = "J",                            action = "last_sibling" },
+              { key = "I",                            action = "toggle_ignored" },
+              { key = "H",                            action = "toggle_dotfiles" },
+              { key = "R",                            action = "refresh" },
+              --{ key = "a",                            action = "create" },
+              { key = "<C-d>",                        action = "remove" },
+              { key = "D",                            action = "trash" },
+              { key = "r",                            action = "rename" },
+              { key = "<C-r>",                        action = "full_rename" },
+              { key = "<C-x>",                        action = "cut" },
+              { key = "c",                            action = "copy" },
+              { key = "p",                            action = "paste" },
+              { key = "y",                            action = "copy_name" },
+              { key = "Y",                            action = "copy_path" },
+              { key = "gy",                           action = "copy_absolute_path" },
+              { key = "[c",                           action = "prev_git_item" },
+              { key = "]c",                           action = "next_git_item" },
+              { key = "-",                            action = "dir_up" },
+              { key = "s",                            action = "system_open" },
+              { key = "q",                            action = "close" },
+              { key = "g?",                           action = "toggle_help" },
+              { key = "W",                            action = "collapse_all" },
+              { key = "S",                            action = "search_node" }
+            }
+          }
+        }
+      }
     end
   }
 
@@ -44,19 +91,69 @@ return require('packer').startup(function(use)
     end
   }
 
+  use { 'markonm/traces.vim' }
+  use {
+    'm-demare/hlargs.nvim',
+    requires = { 'nvim-treesitter/nvim-treesitter' },
+    config = function()
+      require('hlargs').setup()
+    end
+  }
+
+  use {
+    'mboughaba/i3config.vim',
+    ft = {'i3config'}
+  }
+
+  use {
+    'lukas-reineke/indent-blankline.nvim',
+    requires = 'nvim-treesitter/nvim-treesitter',
+    config = function()
+      require("indent_blankline").setup {
+        char = '┊',
+        use_treesitter = true,
+        show_first_indent_level = false,
+        show_current_context = true,
+        show_current_context_start = false,
+        show_end_of_line = true,
+        context_highlight_list = {'Question'},
+        context_patterns = {'class', 'function', 'method', 'if_statement'},
+        filetype_exclude = {'help'},
+      }
+    end
+  }
+
+  -- use { "tversteeg/registers.nvim" } -- TODO: this turns off syntax highlighting on reload
+  -- use { 'ggandor/lightspeed.nvim' }  -- TODO: conflicts with vim-sandwich
+
+  -- TODO: not sure if i'd use it yet
+  -- use {
+  --   'hoschi/yode-nvim',
+  --   requires = {
+  --     'nvim-lua/plenary.nvim'
+  --   },
+  --   config = function()
+  --     require('yode-nvim').setup({})
+  --   end
+  -- }
+
+  -- CATEGORY magic
+
   use {
     'nvim-treesitter/nvim-treesitter',
     requires = {
       'nvim-treesitter/nvim-treesitter-textobjects',
       'windwp/nvim-ts-autotag',
       'andymass/vim-matchup',
+      'yioneko/nvim-yati',
     },
     run = ':TSUpdate',
     config = function()
       require'nvim-treesitter.configs'.setup {
-        ensure_installed = {'lua', 'hcl', 'go', 'python', 'rust'},
+        ensure_installed = {'bash', 'lua', 'hcl', 'go', 'python', 'rust'},
         highlight = { enable = true, },
         indent = { enable = true, },
+        yati = { enable = true },
         incremental_selection = { enable = true, },
         matchup = {
           enable = true,
@@ -68,35 +165,21 @@ return require('packer').startup(function(use)
     end,
   }
 
-  -- use({
-  --   'mvllow/modes.nvim',
-  --   config = function()
-  --     require('modes').setup()
-  --   end
-  -- })
-
-  use { 
-    'JoosepAlviste/nvim-ts-context-commentstring',
-    requires = {
-      'nvim-treesitter/nvim-treesitter',
-    },
+  use({
+    'mvllow/modes.nvim',
+    event = 'BufRead',
     config = function()
-      require'nvim-treesitter.configs'.setup {
-        context_commentstring = {
-          enable = true
-        }
-      }
+      vim.opt.cursorline = true
+      require('modes').setup()
+    end
+  })
+
+  use {
+    'numToStr/Comment.nvim',
+    config = function()
+        require('Comment').setup()
     end
   }
-
-  use { 'machakann/vim-sandwich' }
-    -- sa[wrap] add
-    -- sr[wrap] replace
-    -- sd[wrap] delete
-  use { 'ggandor/lightspeed.nvim' }
-  use { 'markonm/traces.vim' }
-  use { 'folke/tokyonight.nvim' }
-  use { 'tpope/vim-commentary' }
 
   use {
     'hoob3rt/lualine.nvim',
@@ -116,10 +199,11 @@ return require('packer').startup(function(use)
   use {
     'norcalli/nvim-colorizer.lua',
     config = function()
-      require('colorizer').setup {}
+      require('colorizer').setup()
     end,
     -- Red
-    run = ':ColorizerToggle',
+    -- Green
+    -- Blue
   }
 
   use {
@@ -192,12 +276,6 @@ return require('packer').startup(function(use)
     after = "nvim-cmp",
     config = function()
       require("nvim-autopairs").setup {}
-
-      -- handle <CR> mapping with nvim-cmp
-      -- require("nvim-autopairs.completion.cmp").setup {
-      --   map_cr = true, --  map <CR> on insert mode
-      --   map_complete = true -- insert `(` when function/method is completed
-      -- }
     end
   }
 
@@ -207,6 +285,7 @@ return require('packer').startup(function(use)
       'folke/lsp-colors.nvim',
       'onsails/lspkind-nvim',
       'tjdevries/nlua.nvim',
+      'lukas-reineke/lsp-format.nvim'
     },
     config = function()
       local fn = vim.fn
@@ -219,11 +298,13 @@ return require('packer').startup(function(use)
       fn.sign_define('LspDiagnosticsSignHint', {text='💡', texthl='LspDiagnosticsSignHint', linehl='', numhl=''})
 
       require('lspkind').init {
-        with_text = false,
+        mode = "symbol_text",
         preset = 'default',
       }
 
       local on_attach = function(client, bufnr)
+        require "lsp-format".on_attach(client)
+
         local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
         local opts = { noremap=true, silent=true }
 
@@ -291,12 +372,22 @@ return require('packer').startup(function(use)
   }
 
   use {
-    'rhysd/git-messenger.vim',
+    "folke/todo-comments.nvim",
+    requires = "nvim-lua/plenary.nvim",
     config = function()
-      vim.g.git_messenger_always_into_popup = true
+      require("todo-comments").setup {}
     end
   }
 
+  -- CATEGORY git
+
+  -- use {
+  --   'rhysd/git-messenger.vim',
+  --   config = function()
+  --     vim.g.git_messenger_always_into_popup = true
+  --   end
+  -- }
+  --
   use {
     'lewis6991/gitsigns.nvim',
     requires = {
@@ -311,58 +402,32 @@ return require('packer').startup(function(use)
   }
 
   use {
-    'mboughaba/i3config.vim',
-    ft = {'i3config'}
-  }
-
-  use {
-    'nvim-telescope/telescope.nvim',
-    requires = {
-      'nvim-lua/plenary.nvim',
-      'kyazdani42/nvim-web-devicons',
-      'nvim-telescope/telescope-fzy-native.nvim',
-      'nvim-telescope/telescope-symbols.nvim',
-    },
+    'f-person/git-blame.nvim',
     config = function()
-      local telescope = require('telescope')
-      local actions = require('telescope.actions')
-      telescope.setup {
-        defaults = {
-          mappings = {
-            i = {
-              ["<esc>"] = actions.close
-            },
-          },
-        },
-      }
-      require('telescope').load_extension('fzy_native')
-      require('telescope').load_extension('projects')
+      vim.g.gitblame_highlight_group = "Question"
     end
   }
 
--- TODO: this turns off syntax highlighting on reload
---  use { "tversteeg/registers.nvim" }
+  -- use {
+  --   'tanvirtin/vgit.nvim',
+  --   requires = {
+  --     'nvim-lua/plenary.nvim'
+  --   },
+  --   config = function()
+  --     require('vgit').setup()
+  --   end
+  -- }
 
---  TODO: saving file causes treesitter integration to fail
---  use {
---    'lukas-reineke/indent-blankline.nvim',
---    requires = 'nvim-treesitter/nvim-treesitter',
---    branch = 'lua',
---    config = function()
---      local g = vim.g
---
---      g.indent_blankline_char = '┊'
---      g.indent_blankline_use_treesitter = true
---      g.indent_blankline_show_first_indent_level = false
---      g.indent_blankline_show_current_context = true
---      g.indent_blankline_context_highlight_list = {'Warning'}
---      g.indent_blankline_context_patterns = {'class', 'function', 'method', 'if_statement'}
---      g.indent_blankline_filetype_exclude = {'help'}
---    end
---  }
-
-end, {
+  if packer_bootstrap then
+    require('packer').sync()
+  end
+end,
+config = {
+  profile = {
+      enable = true,
+      threshold = 1
+  },
   display = {
     open_fn = require('packer.util').float,
   }
-})
+}})
