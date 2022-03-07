@@ -219,6 +219,13 @@ return require('packer').startup({function(use)
     -- Blue
   }
 
+  use({
+    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    config = function()
+      require("lsp_lines").register_lsp_virtual_lines()
+    end,
+  })
+
   use {
     'VonHeikemen/lsp-zero.nvim',
     requires = {
@@ -227,6 +234,8 @@ return require('packer').startup({function(use)
       {'williamboman/nvim-lsp-installer'},
       {'onsails/lspkind-nvim'},
       {'folke/lsp-colors.nvim'},
+      {'jose-elias-alvarez/null-ls.nvim'},
+      {'nvim-lua/plenary.nvim'}, -- dependency for null-ls
 
       -- Formatting
       {'lukas-reineke/lsp-format.nvim'},
@@ -247,12 +256,20 @@ return require('packer').startup({function(use)
       local lsp = require('lsp-zero')
       local lspkind = require('lspkind')
       local lspformat = require("lsp-format")
+      local null_ls = require("null-ls")
 
       lsp.preset('recommended')
       lsp.nvim_workspace()
 
+      null_ls.setup({
+        sources = {
+          require("null-ls").builtins.formatting.black,
+          require("null-ls").builtins.formatting.isort,
+        }
+      })
+
       lsp.ensure_installed({
-        "pyright", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls", "tflint"
+        "pylsp", "pyright", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls", "tflint"
       })
 
       lsp.on_attach(function(client)
@@ -276,7 +293,7 @@ return require('packer').startup({function(use)
       lsp.setup()
 
       vim.diagnostic.config({
-        virtual_text = true,
+        virtual_text = false,
         signs = true,
         underline = true,
         update_in_insert = true,
