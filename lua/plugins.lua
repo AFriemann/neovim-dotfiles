@@ -2,7 +2,7 @@ local fn = vim.fn
 local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
 
 if fn.empty(fn.glob(install_path)) > 0 then
-  packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+  PackerBootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
   --vim.api.nvim_command 'packadd packer.nvim'
 end
 
@@ -71,7 +71,7 @@ return require('packer').startup({function(use)
               { key = "I",                            action = "toggle_ignored" },
               { key = "H",                            action = "toggle_dotfiles" },
               { key = "R",                            action = "refresh" },
-              --{ key = "a",                            action = "create" },
+              { key = "a",                            action = "create" },
               { key = "<C-d>",                        action = "remove" },
               { key = "D",                            action = "trash" },
               { key = "r",                            action = "rename" },
@@ -263,8 +263,10 @@ return require('packer').startup({function(use)
 
       null_ls.setup({
         sources = {
-          require("null-ls").builtins.formatting.black,
-          require("null-ls").builtins.formatting.isort,
+          null_ls.builtins.formatting.black,
+          null_ls.builtins.formatting.isort,
+          null_ls.builtins.code_actions.shellcheck,
+          null_ls.builtins.diagnostics.shellcheck,
         }
       })
 
@@ -387,7 +389,7 @@ return require('packer').startup({function(use)
   --   end
   -- }
 
-  if packer_bootstrap then
+  if PackerBootstrap then
     require('packer').sync()
   end
 end,

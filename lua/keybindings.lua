@@ -12,4 +12,16 @@ set_keymap("n", "<leader>t", "<cmd>TroubleToggle<cr>", {silent = true, noremap =
 set_keymap("n", "<leader>ca", "<cmd>CodeActionMenu<cr>", {silent = true, noremap = true})
 
 set_keymap('n', '<Tab>', '<cmd>BufferLineCycleNext<CR>', { noremap = true, silent = true })
-set_keymap('n', '<S-Tab>', '<cmd>BufferLineCyclePrevious<CR>', { noremap = true, silent = true })
+set_keymap('n', '<S-Tab>', '<cmd>BufferLineCyclePrev<CR>', { noremap = true, silent = true })
+
+vim.g.diagnostics_visible = true
+function _G.toggle_diagnostics()
+  if vim.g.diagnostics_visible then
+    vim.g.diagnostics_visible = false
+    vim.diagnostic.disable()
+  else
+    vim.g.diagnostics_visible = true
+    vim.diagnostic.enable()
+  end
+end
+vim.api.nvim_buf_set_keymap(0, 'n', '<Leader>l', ':call v:lua.toggle_diagnostics()<CR>', {silent=true, noremap=true})
