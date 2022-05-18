@@ -24,6 +24,14 @@ return require('packer').startup({function(use)
 
   -- CATEGORY utility
 
+  use {
+    "akinsho/toggleterm.nvim",
+    tag = 'v1.*',
+    config = function()
+      require("toggleterm").setup()
+    end,
+  }
+
   -- sa[wrap] add
   -- sr[wrap] replace
   -- sd[wrap] delete
@@ -31,6 +39,7 @@ return require('packer').startup({function(use)
 
   use {
     'akinsho/bufferline.nvim',
+    branch = 'main',
     requires = 'kyazdani42/nvim-web-devicons',
     config = function ()
       require("bufferline").setup {}
@@ -44,7 +53,6 @@ return require('packer').startup({function(use)
     },
     config = function()
       require'nvim-tree'.setup {
-        auto_close = true,
         open_on_tab = true,
         hijack_unnamed_buffer_when_opening = true,
         diagnostics = {
@@ -178,14 +186,14 @@ return require('packer').startup({function(use)
     end,
   }
 
-  use({
-    'mvllow/modes.nvim',
-    event = 'BufRead',
-    config = function()
-      vim.opt.cursorline = true
-      require('modes').setup()
-    end
-  })
+  -- use({
+  --   'mvllow/modes.nvim',
+  --   event = 'BufRead',
+  --   config = function()
+  --     vim.opt.cursorline = true
+  --     require('modes').setup()
+  --   end
+  -- })
 
   use {
     'numToStr/Comment.nvim',
@@ -283,13 +291,20 @@ return require('packer').startup({function(use)
         preset = 'default',
       }
 
+      local cmp = require('cmp')
+
       lsp.setup_nvim_cmp({
         formatting = {
           format = lspkind.cmp_format(),
         },
         documentation = {
           border = { '', '', '', ' ', '', '', '', ' ' }, -- remove the obnoxious borders
+        },
+        mapping = {
+          ['<C-n>'] = cmp.mapping(cmp.mapping.select_next_item(), {'i','c'}),
+          ['<C-p>'] = cmp.mapping(cmp.mapping.select_prev_item(), {'i','c'}),
         }
+        -- mapping = lsp.defaults.cmp_mappings()
       })
 
       lsp.setup()
