@@ -13,6 +13,8 @@ set_keymap("n", "<leader>ca", "<cmd>CodeActionMenu<cr>", { silent = true, norema
 set_keymap('n', '<Tab>', '<cmd>BufferLineCycleNext<CR>', { noremap = true, silent = true })
 set_keymap('n', '<S-Tab>', '<cmd>BufferLineCyclePrev<CR>', { noremap = true, silent = true })
 
+set_keymap('n', '<leader>l', ':call v:lua.toggle_diagnostics()<CR>', { noremap = true, silent = true })
+
 vim.api.nvim_create_autocmd('TermEnter', {
   pattern = 'term://*toggleterm#*',
   command = 'tnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>'
@@ -31,5 +33,3 @@ function _G.toggle_diagnostics()
     vim.diagnostic.enable()
   end
 end
-
-vim.api.nvim_buf_set_keymap(0, 'n', '<Leader>l', ':call v:lua.toggle_diagnostics()<CR>', { silent = true, noremap = true })

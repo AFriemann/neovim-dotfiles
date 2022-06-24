@@ -9,7 +9,7 @@ vim.g.python3_host_prog = '/usr/bin/python3'
 
 -- completion
 --opt.shortmess = vim.o.shortmess .. "c"        -- don't show completion messages
--- opt.completeopt = 'menuone,noselect,noinsert' -- completion options
+--opt.completeopt = 'menuone,noselect,noinsert' -- completion options
 -- visual
 opt.termguicolors = true -- enable 24-bit RGB colors
 opt.listchars = 'tab:▷ ,trail:·,extends:◣,precedes:◢,nbsp:○,eol:↵'
@@ -45,6 +45,14 @@ opt.tabstop = indent -- 1 tab == `indent` spaces
 opt.shiftwidth = indent -- shift `indent` spaces when tab
 opt.smartindent = true -- autoindent new lines
 opt.autoindent = true
+
+vim.diagnostic.config({
+  virtual_text = false,
+  signs = true,
+  underline = true,
+  update_in_insert = true,
+  severity_sort = true,
+})
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {

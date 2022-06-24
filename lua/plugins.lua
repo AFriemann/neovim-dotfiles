@@ -1,12 +1,12 @@
 local fn = vim.fn
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 
 if fn.empty(fn.glob(install_path)) > 0 then
-  PackerBootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+  PackerBootstrap = fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
   --vim.api.nvim_command 'packadd packer.nvim'
 end
 
-return require('packer').startup({function(use)
+return require('packer').startup({ function(use)
   use 'wbthomason/packer.nvim'
 
   -- CATEGORY colors
@@ -41,7 +41,7 @@ return require('packer').startup({function(use)
     'akinsho/bufferline.nvim',
     branch = 'main',
     requires = 'kyazdani42/nvim-web-devicons',
-    config = function ()
+    config = function()
       require("bufferline").setup {}
     end
   }
@@ -52,7 +52,7 @@ return require('packer').startup({function(use)
       'kyazdani42/nvim-web-devicons', -- optional, for file icon
     },
     config = function()
-      require'nvim-tree'.setup {
+      require 'nvim-tree'.setup {
         open_on_tab = true,
         hijack_unnamed_buffer_when_opening = true,
         diagnostics = {
@@ -62,42 +62,42 @@ return require('packer').startup({function(use)
           mappings = {
             custom_only = true,
             list = {
-              { key = {"<CR>", "o", "<2-LeftMouse>"}, action = "edit" },
+              { key = { "<CR>", "o", "<2-LeftMouse>" }, action = "edit" },
               --{ key = "<C-e>",                        action = "edit_in_place" },
               --{ key = {"O"},                          action = "edit_no_picker" },
               --{ key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
-              { key = "<C-v>",                        action = "vsplit" },
-              { key = "<C-x>",                        action = "split" },
-              { key = "<C-t>",                        action = "tabnew" },
-              { key = "<",                            action = "prev_sibling" },
-              { key = ">",                            action = "next_sibling" },
-              { key = "P",                            action = "parent_node" },
-              { key = "<BS>",                         action = "close_node" },
+              { key = "<C-v>", action = "vsplit" },
+              { key = "<C-x>", action = "split" },
+              { key = "<C-t>", action = "tabnew" },
+              { key = "<", action = "prev_sibling" },
+              { key = ">", action = "next_sibling" },
+              { key = "P", action = "parent_node" },
+              { key = "<BS>", action = "close_node" },
               --{ key = "<Tab>",                        action = "preview" },
-              { key = "K",                            action = "first_sibling" },
-              { key = "J",                            action = "last_sibling" },
-              { key = "I",                            action = "toggle_ignored" },
-              { key = "H",                            action = "toggle_dotfiles" },
-              { key = "R",                            action = "refresh" },
-              { key = "a",                            action = "create" },
-              { key = "<C-d>",                        action = "remove" },
-              { key = "D",                            action = "trash" },
-              { key = "r",                            action = "rename" },
-              { key = "<C-r>",                        action = "full_rename" },
-              { key = "<C-x>",                        action = "cut" },
-              { key = "c",                            action = "copy" },
-              { key = "p",                            action = "paste" },
-              { key = "y",                            action = "copy_name" },
-              { key = "Y",                            action = "copy_path" },
-              { key = "gy",                           action = "copy_absolute_path" },
-              { key = "[c",                           action = "prev_git_item" },
-              { key = "]c",                           action = "next_git_item" },
-              { key = "-",                            action = "dir_up" },
-              { key = "s",                            action = "system_open" },
-              { key = "q",                            action = "close" },
-              { key = "g?",                           action = "toggle_help" },
-              { key = "W",                            action = "collapse_all" },
-              { key = "S",                            action = "search_node" }
+              { key = "K", action = "first_sibling" },
+              { key = "J", action = "last_sibling" },
+              { key = "I", action = "toggle_ignored" },
+              { key = "H", action = "toggle_dotfiles" },
+              { key = "R", action = "refresh" },
+              { key = "a", action = "create" },
+              { key = "<C-d>", action = "remove" },
+              { key = "D", action = "trash" },
+              { key = "r", action = "rename" },
+              { key = "<C-r>", action = "full_rename" },
+              { key = "<C-x>", action = "cut" },
+              { key = "c", action = "copy" },
+              { key = "p", action = "paste" },
+              { key = "y", action = "copy_name" },
+              { key = "Y", action = "copy_path" },
+              { key = "gy", action = "copy_absolute_path" },
+              { key = "[c", action = "prev_git_item" },
+              { key = "]c", action = "next_git_item" },
+              { key = "-", action = "dir_up" },
+              { key = "s", action = "system_open" },
+              { key = "q", action = "close" },
+              { key = "g?", action = "toggle_help" },
+              { key = "W", action = "collapse_all" },
+              { key = "S", action = "search_node" }
             }
           }
         }
@@ -123,7 +123,7 @@ return require('packer').startup({function(use)
 
   use {
     'mboughaba/i3config.vim',
-    ft = {'i3config'}
+    ft = { 'i3config' }
   }
 
   use {
@@ -137,9 +137,9 @@ return require('packer').startup({function(use)
         show_current_context = true,
         show_current_context_start = false,
         show_end_of_line = true,
-        context_highlight_list = {'Question'},
-        context_patterns = {'class', 'function', 'method', 'if_statement'},
-        filetype_exclude = {'help'},
+        context_highlight_list = { 'Question' },
+        context_patterns = { 'class', 'function', 'method', 'if_statement' },
+        filetype_exclude = { 'help' },
       }
     end
   }
@@ -170,8 +170,8 @@ return require('packer').startup({function(use)
     },
     run = ':TSUpdate',
     config = function()
-      require'nvim-treesitter.configs'.setup {
-        ensure_installed = {'bash', 'lua', 'hcl', 'go', 'python', 'rust'},
+      require 'nvim-treesitter.configs'.setup {
+        ensure_installed = { 'bash', 'lua', 'hcl', 'go', 'python', 'rust' },
         highlight = { enable = true, },
         indent = { enable = true, },
         --yati = { enable = true },
@@ -198,15 +198,15 @@ return require('packer').startup({function(use)
   use {
     'numToStr/Comment.nvim',
     config = function()
-        require('Comment').setup()
+      require('Comment').setup()
     end
   }
 
   use {
     'hoob3rt/lualine.nvim',
     requires = {
-      {'kyazdani42/nvim-web-devicons', opt = true},
-      {'folke/tokyonight.nvim'},
+      { 'kyazdani42/nvim-web-devicons', opt = true },
+      { 'folke/tokyonight.nvim' },
     },
     config = function()
       require('lualine').setup {
@@ -238,37 +238,35 @@ return require('packer').startup({function(use)
     'VonHeikemen/lsp-zero.nvim',
     requires = {
       -- LSP Support
-      {'neovim/nvim-lspconfig'},
-      {'williamboman/nvim-lsp-installer'},
-      {'onsails/lspkind-nvim'},
-      {'folke/lsp-colors.nvim'},
-      {'jose-elias-alvarez/null-ls.nvim'},
-      {'nvim-lua/plenary.nvim'}, -- dependency for null-ls
+      { 'neovim/nvim-lspconfig' },
+      { 'williamboman/nvim-lsp-installer' },
+      { 'onsails/lspkind-nvim' },
+      { 'folke/lsp-colors.nvim' },
+      { 'jose-elias-alvarez/null-ls.nvim' },
+      { 'nvim-lua/plenary.nvim' }, -- dependency for null-ls
 
       -- Formatting
-      {'lukas-reineke/lsp-format.nvim'},
+      { 'lukas-reineke/lsp-format.nvim' },
 
       -- Autocompletion
-      {'hrsh7th/nvim-cmp'},
-      {'hrsh7th/cmp-buffer'},
-      {'hrsh7th/cmp-path'},
-      {'saadparwaiz1/cmp_luasnip'},
-      {'hrsh7th/cmp-nvim-lsp'},
-      {'hrsh7th/cmp-nvim-lua'},
+      { 'hrsh7th/nvim-cmp' },
+      { 'hrsh7th/cmp-buffer' },
+      { 'hrsh7th/cmp-path' },
+      { 'saadparwaiz1/cmp_luasnip' },
+      { 'hrsh7th/cmp-nvim-lsp' },
+      { 'hrsh7th/cmp-nvim-lua' },
 
       -- Snippets
-      {'L3MON4D3/LuaSnip'},
-      {'rafamadriz/friendly-snippets'},
+      { 'L3MON4D3/LuaSnip' },
+      { 'rafamadriz/friendly-snippets' },
     },
     config = function()
-      local lsp = require('lsp-zero')
-      local lspkind = require('lspkind')
-      local lspformat = require("lsp-format")
+      local lsp_zero = require('lsp-zero')
+
+      lsp_zero.preset('recommended')
+      lsp_zero.nvim_workspace()
+
       local null_ls = require("null-ls")
-
-      lsp.preset('recommended')
-      lsp.nvim_workspace()
-
       null_ls.setup({
         sources = {
           null_ls.builtins.formatting.black,
@@ -278,44 +276,27 @@ return require('packer').startup({function(use)
         }
       })
 
-      lsp.ensure_installed({
-        "pylsp", "pyright", "bashls", "jsonls", "groovyls", "dockerls", "yamlls", "gopls", "rls", "tflint"
-      })
-
-      lsp.on_attach(function(client)
+      local lspformat = require("lsp-format")
+      lsp_zero.on_attach(function(client)
         lspformat.on_attach(client)
       end)
 
+      local lspkind = require('lspkind')
       lspkind.init {
         mode = "symbol_text",
         preset = 'default',
       }
 
-      local cmp = require('cmp')
-
-      lsp.setup_nvim_cmp({
+      lsp_zero.setup_nvim_cmp({
         formatting = {
           format = lspkind.cmp_format(),
         },
         documentation = {
           border = { '', '', '', ' ', '', '', '', ' ' }, -- remove the obnoxious borders
         },
-        mapping = {
-          ['<C-n>'] = cmp.mapping(cmp.mapping.select_next_item(), {'i','c'}),
-          ['<C-p>'] = cmp.mapping(cmp.mapping.select_prev_item(), {'i','c'}),
-        }
-        -- mapping = lsp.defaults.cmp_mappings()
       })
 
-      lsp.setup()
-
-      vim.diagnostic.config({
-        virtual_text = false,
-        signs = true,
-        underline = true,
-        update_in_insert = true,
-        severity_sort = true,
-      })
+      lsp_zero.setup()
     end
   }
 
@@ -408,12 +389,12 @@ return require('packer').startup({function(use)
     require('packer').sync()
   end
 end,
-config = {
-  profile = {
+  config = {
+    profile = {
       enable = true,
       threshold = 1
-  },
-  display = {
-    open_fn = require('packer.util').float,
-  }
-}})
+    },
+    display = {
+      open_fn = require('packer.util').float,
+    }
+  } })
