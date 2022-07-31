@@ -274,8 +274,8 @@ return require('packer').startup({ function(use)
       local null_ls = require("null-ls")
       local lsp_lines = require('lsp_lines')
 
-      lsp.preset('recommended')
-      lsp.nvim_workspace()
+      lsp_zero.preset('recommended')
+      lsp_zero.nvim_workspace()
 
       lsp_lines.setup()
       null_ls.setup({
