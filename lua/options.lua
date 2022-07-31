@@ -43,7 +43,7 @@ opt.updatetime = 250 -- decrease update time
 opt.expandtab = true -- use spaces instead of tabs
 opt.tabstop = indent -- 1 tab == `indent` spaces
 opt.shiftwidth = indent -- shift `indent` spaces when tab
-opt.smartindent = true -- autoindent new lines
+opt.smartindent = false -- results in faulty indentation
 opt.autoindent = true
 
 vim.diagnostic.config({
