@@ -14,6 +14,15 @@ return require('packer').startup({ function(use)
   use { 'folke/tokyonight.nvim' }
   --use { 'rebelot/kanagawa.nvim' }
 
+  -- CATEGORY syntax highlighting
+  use {
+    'evanleck/vim-svelte',
+    requires = {
+      'othree/html5.vim',
+      'pangloss/vim-javascript',
+    }
+  }
+
   -- CATEGORY performance
   use {
     'antoinemadec/FixCursorHold.nvim',
@@ -21,6 +30,8 @@ return require('packer').startup({ function(use)
       vim.g.curshold_updatime = 100
     end,
   }
+
+  use { 'gentoo/gentoo-syntax' }
 
   -- CATEGORY utility
 
@@ -227,13 +238,6 @@ return require('packer').startup({ function(use)
     -- Blue
   }
 
-  use({
-    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
-    config = function()
-      require("lsp_lines").register_lsp_virtual_lines()
-    end,
-  })
-
   use {
     'VonHeikemen/lsp-zero.nvim',
     requires = {
@@ -257,8 +261,9 @@ return require('packer').startup({ function(use)
       { 'hrsh7th/cmp-nvim-lua' },
 
       -- Snippets
-      { 'L3MON4D3/LuaSnip' },
-      { 'rafamadriz/friendly-snippets' },
+      {'L3MON4D3/LuaSnip'},
+      {'rafamadriz/friendly-snippets'},
+      {'https://git.sr.ht/~whynothugo/lsp_lines.nvim'},
     },
     config = function()
       local lsp_zero = require('lsp-zero')
@@ -267,6 +272,12 @@ return require('packer').startup({ function(use)
       lsp_zero.nvim_workspace()
 
       local null_ls = require("null-ls")
+      local lsp_lines = require('lsp_lines')
+
+      lsp.preset('recommended')
+      lsp.nvim_workspace()
+
+      lsp_lines.setup()
       null_ls.setup({
         sources = {
           null_ls.builtins.formatting.black,
