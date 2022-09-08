@@ -11,7 +11,30 @@ return require('packer').startup({ function(use)
 
   -- CATEGORY colors
   use { 'kyazdani42/nvim-web-devicons' }
-  use { 'folke/tokyonight.nvim' }
+  use {
+    'folke/tokyonight.nvim',
+    config = function()
+      require("tokyonight").setup({
+        style = "night",
+        transparent = true,
+        terminal_colors = true,
+        styles = {
+          comments = "italic",
+          keywords = "NONE",
+          functions = "italic",
+          variables = "italic",
+        },
+        lualine_bold = true,
+        hide_inactive_statusline = true,
+        sidebars = {
+          "packer",
+          "qf",
+          "help",
+          "terminal",
+        },
+      })
+    end
+  }
   --use { 'rebelot/kanagawa.nvim' }
 
   -- CATEGORY syntax highlighting
