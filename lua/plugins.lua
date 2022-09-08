@@ -34,6 +34,32 @@ return require('packer').startup({ function(use)
   use { 'gentoo/gentoo-syntax' }
 
   -- CATEGORY utility
+  use {
+    'nicwest/vim-camelsnek'
+    -- :Snek, :Camel, :CamelB, Kebab
+  }
+  use {
+    -- gm to record macro, ESC to exit and M to apply to subsequent matches
+    -- gM to change word, ESC to exit insert and M to change subsequent matches
+    -- use g!M to only change full word matches
+    -- use ga to apply all matches instead of M
+    'otavioschwanck/cool-substitute.nvim',
+    config = function()
+      require('cool-substitute').setup({
+        setup_keybindings = true,
+      })
+    end
+  }
+
+  use {
+    'gaoDean/autolist.nvim',
+    config = function()
+      require('autolist').setup({
+        enabled = true,
+        create_enter_mapping = true,
+      })
+    end
+  }
 
   use {
     "akinsho/toggleterm.nvim",
@@ -261,9 +287,9 @@ return require('packer').startup({ function(use)
       { 'hrsh7th/cmp-nvim-lua' },
 
       -- Snippets
-      {'L3MON4D3/LuaSnip'},
-      {'rafamadriz/friendly-snippets'},
-      {'https://git.sr.ht/~whynothugo/lsp_lines.nvim'},
+      { 'L3MON4D3/LuaSnip' },
+      { 'rafamadriz/friendly-snippets' },
+      { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
     },
     config = function()
       local lsp_zero = require('lsp-zero')
