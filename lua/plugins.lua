@@ -37,6 +37,17 @@ return require('packer').startup({ function(use)
   }
   --use { 'rebelot/kanagawa.nvim' }
 
+  -- fancy cursor colors
+  use { 'gen740/SmoothCursor.nvim',
+    config = function()
+      require('smoothcursor').setup({
+        fancy = {
+          enable = true,
+        },
+      })
+    end
+  }
+
   -- CATEGORY syntax highlighting
   use {
     'evanleck/vim-svelte',
@@ -86,7 +97,7 @@ return require('packer').startup({ function(use)
 
   use {
     "akinsho/toggleterm.nvim",
-    tag = 'v1.*',
+    branch = 'main',
     config = function()
       require("toggleterm").setup()
     end,
@@ -333,6 +344,7 @@ return require('packer').startup({ function(use)
           null_ls.builtins.formatting.isort,
           null_ls.builtins.code_actions.shellcheck,
           null_ls.builtins.diagnostics.shellcheck,
+          null_ls.builtins.formatting.jq,
         }
       })
 
