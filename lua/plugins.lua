@@ -68,6 +68,7 @@ return require('packer').startup({ function(use)
   use { 'gentoo/gentoo-syntax' }
 
   -- CATEGORY utility
+  use { 'lewis6991/impatient.nvim' }
   use {
     'nicwest/vim-camelsnek'
     -- :Snek, :Camel, :CamelB, Kebab
@@ -243,7 +244,10 @@ return require('packer').startup({ function(use)
     config = function()
       require 'nvim-treesitter.configs'.setup {
         ensure_installed = { 'bash', 'lua', 'hcl', 'go', 'python', 'rust' },
-        highlight = { enable = true, },
+        highlight = {
+          enable = true,
+          use_languagetree = true,
+        },
         indent = { enable = true, },
         --yati = { enable = true },
         incremental_selection = { enable = true, },
@@ -303,11 +307,16 @@ return require('packer').startup({ function(use)
     requires = {
       -- LSP Support
       { 'neovim/nvim-lspconfig' },
-      { 'williamboman/nvim-lsp-installer' },
+      { 'williamboman/mason.nvim' },
+      { 'williamboman/mason-lspconfig.nvim' },
       { 'onsails/lspkind-nvim' },
       { 'folke/lsp-colors.nvim' },
       { 'jose-elias-alvarez/null-ls.nvim' },
       { 'nvim-lua/plenary.nvim' }, -- dependency for null-ls
+
+      -- Utility
+      { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
+      { 'RRethy/vim-illuminate' },
 
       -- Formatting
       { 'lukas-reineke/lsp-format.nvim' },
@@ -323,7 +332,9 @@ return require('packer').startup({ function(use)
       -- Snippets
       { 'L3MON4D3/LuaSnip' },
       { 'rafamadriz/friendly-snippets' },
-      { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
+
+      -- Language specific
+      { 'simrat39/rust-tools.nvim' },
     },
     config = function()
       local lsp_zero = require('lsp-zero')
@@ -359,6 +370,9 @@ return require('packer').startup({ function(use)
         preset = 'default',
       }
 
+      local cmp = require('cmp')
+      local cmp_select = { behavior = cmp.SelectBehavior.Select }
+
       lsp_zero.setup_nvim_cmp({
         formatting = {
           format = lspkind.cmp_format(),
@@ -366,23 +380,35 @@ return require('packer').startup({ function(use)
         documentation = {
           border = { '', '', '', ' ', '', '', '', ' ' }, -- remove the obnoxious borders
         },
+        mapping = lsp_zero.defaults.cmp_mappings({
+          ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+          ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+        })
       })
 
+      local rust_lsp = lsp_zero.build_options('rust_analyzer', {})
+
       lsp_zero.setup()
+
+      -- rust-tools setup
+      local rust_tools = require("rust-tools")
+
+      rust_tools.setup({ server = rust_lsp })
+      rust_tools.inlay_hints.enable()
+
+      -- illuminate
+      require("illuminate").configure({
+        providers = {
+          'lsp',
+          'treesitter',
+        }
+      })
     end
   }
 
   use {
     'weilbith/nvim-code-action-menu',
     cmd = 'CodeActionMenu',
-  }
-
-  use {
-    "windwp/nvim-autopairs",
-    after = "nvim-cmp",
-    config = function()
-      require("nvim-autopairs").setup {}
-    end
   }
 
   -- use {
