@@ -193,6 +193,7 @@ return require('packer').startup({ function(use)
     end
   }
 
+  -- CATEGORY filetypes
   use {
     'mboughaba/i3config.vim',
     ft = { 'i3config' }
@@ -243,7 +244,7 @@ return require('packer').startup({ function(use)
     run = ':TSUpdate',
     config = function()
       require 'nvim-treesitter.configs'.setup {
-        ensure_installed = { 'bash', 'lua', 'hcl', 'go', 'python', 'rust' },
+        ensure_installed = { 'bash', 'lua', 'hcl', 'go', 'python', 'rust', },
         highlight = {
           enable = true,
           use_languagetree = true,
@@ -317,6 +318,7 @@ return require('packer').startup({ function(use)
       -- Utility
       { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
       { 'RRethy/vim-illuminate' },
+      { 'j-hui/fidget.nvim' },
 
       -- Formatting
       { 'lukas-reineke/lsp-format.nvim' },
@@ -325,12 +327,12 @@ return require('packer').startup({ function(use)
       { 'hrsh7th/nvim-cmp' },
       { 'hrsh7th/cmp-buffer' },
       { 'hrsh7th/cmp-path' },
-      { 'saadparwaiz1/cmp_luasnip' },
       { 'hrsh7th/cmp-nvim-lsp' },
       { 'hrsh7th/cmp-nvim-lua' },
 
       -- Snippets
       { 'L3MON4D3/LuaSnip' },
+      { 'saadparwaiz1/cmp_luasnip' },
       { 'rafamadriz/friendly-snippets' },
 
       -- Language specific
@@ -393,8 +395,20 @@ return require('packer').startup({ function(use)
       -- rust-tools setup
       local rust_tools = require("rust-tools")
 
-      rust_tools.setup({ server = rust_lsp })
+      rust_tools.setup({
+        server = rust_lsp,
+        tools = {
+          inlay_hints = {
+            auto = true,
+            parameter_hints_prefix = " <- ",
+            other_hints_prefix = " => ",
+          },
+        },
+      })
+
       rust_tools.inlay_hints.enable()
+
+      require("fidget").setup {}
 
       -- illuminate
       require("illuminate").configure({
