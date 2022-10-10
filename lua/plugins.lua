@@ -12,30 +12,26 @@ return require('packer').startup({ function(use)
   -- CATEGORY colors
   use { 'kyazdani42/nvim-web-devicons' }
   use {
-    'folke/tokyonight.nvim',
+    "catppuccin/nvim",
+    as = "catppuccin",
     config = function()
-      require("tokyonight").setup({
-        style = "night",
-        transparent = true,
-        terminal_colors = true,
-        styles = {
-          comments = "italic",
-          keywords = "NONE",
-          functions = "italic",
-          variables = "italic",
-        },
-        lualine_bold = true,
-        hide_inactive_statusline = true,
-        sidebars = {
-          "packer",
-          "qf",
-          "help",
-          "terminal",
+      vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+
+      require("catppuccin").setup({
+        integrations = {
+          fidget = true,
+          gitsigns = true,
+          cmp = true,
+          treesitter = true,
+          nvimtree = true,
+          lsp_trouble = true,
+          -- symbols_outline = true,
         },
       })
+
+      vim.api.nvim_command "colorscheme catppuccin"
     end
   }
-  --use { 'rebelot/kanagawa.nvim' }
 
   -- fancy cursor colors
   use { 'gen740/SmoothCursor.nvim',
@@ -112,9 +108,14 @@ return require('packer').startup({ function(use)
   use {
     'akinsho/bufferline.nvim',
     branch = 'main',
-    requires = 'kyazdani42/nvim-web-devicons',
+    requires = {
+      'kyazdani42/nvim-web-devicons',
+      'catppuccin'
+    },
     config = function()
-      require("bufferline").setup {}
+      require("bufferline").setup {
+        highlights = require("catppuccin.groups.integrations.bufferline").get(),
+      }
     end
   }
 
@@ -125,6 +126,14 @@ return require('packer').startup({ function(use)
     },
     config = function()
       require 'nvim-tree'.setup {
+        -- testing
+        sync_root_with_cwd = true,
+        respect_buf_cwd = true,
+        update_focused_file = {
+          enable = true,
+          update_root = true
+        },
+        --
         open_on_tab = true,
         hijack_unnamed_buffer_when_opening = true,
         diagnostics = {
@@ -244,7 +253,15 @@ return require('packer').startup({ function(use)
     run = ':TSUpdate',
     config = function()
       require 'nvim-treesitter.configs'.setup {
-        ensure_installed = { 'bash', 'lua', 'hcl', 'go', 'python', 'rust', },
+        ensure_installed = { 'bash', 'lua', 'hcl', 'go', 'python', 'rust', 'json', },
+        highlight_definitions = {
+          enable = true,
+          -- Set to false if you have an `updatetime` of ~100.
+          clear_on_cursor_move = true,
+        },
+        highlight_current_scope = {
+          enable = true,
+        },
         highlight = {
           enable = true,
           use_languagetree = true,
@@ -278,17 +295,37 @@ return require('packer').startup({ function(use)
     end
   }
 
+  -- TODO: not sure yet
+  use {
+    'phaazon/notisys.nvim',
+    config = function()
+      require 'notisys'.setup()
+    end
+  }
+
   use {
     'hoob3rt/lualine.nvim',
     requires = {
       { 'kyazdani42/nvim-web-devicons', opt = true },
-      { 'folke/tokyonight.nvim' },
+      { 'catppuccin' },
+      { 'phelipetls/jsonpath.nvim' },
     },
     config = function()
+      local jsonpath = require("jsonpath")
+
+      local function json_section()
+        if vim.bo.filetype == "json" then
+          return jsonpath.get()
+        else
+          return [[]]
+        end
+      end
+
       require('lualine').setup {
         options = {
-          theme = 'tokyonight',
-        }
+          theme = 'catppuccin',
+        },
+        sections = { lualine_a = { json_section } },
       }
     end
   }
@@ -319,6 +356,7 @@ return require('packer').startup({ function(use)
       { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
       { 'RRethy/vim-illuminate' },
       { 'j-hui/fidget.nvim' },
+      -- { 'simrat39/symbols-outline.nvim' },
 
       -- Formatting
       { 'lukas-reineke/lsp-format.nvim' },
@@ -329,8 +367,14 @@ return require('packer').startup({ function(use)
       { 'hrsh7th/cmp-path' },
       { 'hrsh7th/cmp-nvim-lsp' },
       { 'hrsh7th/cmp-nvim-lua' },
+      { 'petertriho/cmp-git' },
+      { 'Dosx001/cmp-commit' },
+      { 'davidsierradz/cmp-conventionalcommits' },
+      { 'ray-x/cmp-treesitter' },
 
       -- Snippets
+      -- <C-d> next arg
+      -- <C-b> previous arg
       { 'L3MON4D3/LuaSnip' },
       { 'saadparwaiz1/cmp_luasnip' },
       { 'rafamadriz/friendly-snippets' },
@@ -376,6 +420,12 @@ return require('packer').startup({ function(use)
       local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
       lsp_zero.setup_nvim_cmp({
+        sources = {
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+          { name = 'buffer' },
+          { name = 'treesitter' },
+        },
         formatting = {
           format = lspkind.cmp_format(),
         },
@@ -383,10 +433,23 @@ return require('packer').startup({ function(use)
           border = { '', '', '', ' ', '', '', '', ' ' }, -- remove the obnoxious borders
         },
         mapping = lsp_zero.defaults.cmp_mappings({
+          ['<C-Space>'] = cmp.mapping.complete(),
           ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
           ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
         })
       })
+
+      -- Set configuration for specific filetype.
+      cmp.setup.filetype('gitcommit', {
+        sources = cmp.config.sources({
+          { name = 'conventionalcommits' },
+          { name = 'git' },
+        })
+      })
+
+      require("cmp_git").setup()
 
       local rust_lsp = lsp_zero.build_options('rust_analyzer', {})
 
@@ -408,7 +471,11 @@ return require('packer').startup({ function(use)
 
       rust_tools.inlay_hints.enable()
 
-      require("fidget").setup {}
+      require("fidget").setup {
+        window = {
+          blend = 0,
+        },
+      }
 
       -- illuminate
       require("illuminate").configure({
@@ -417,6 +484,10 @@ return require('packer').startup({ function(use)
           'treesitter',
         }
       })
+
+      -- require("symbols-outline").setup({
+      --   auto_close = true,
+      -- })
     end
   }
 
