@@ -100,6 +100,39 @@ return require('packer').startup({ function(use)
     end,
   }
 
+  use {
+    'nvim-telescope/telescope.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim',
+    }
+  }
+
+  use({
+    'gnikdroy/projections.nvim',
+    requires = {
+      'nvim-telescope/telescope.nvim',
+    },
+    config = function()
+      require("projections").setup({
+        workspaces = {
+          "~/git",
+          "~/work/clark/repositories",
+        },
+        patterns = { ".git" },
+      })
+
+      -- Bind <leader>fp to Telescope projections
+      require('telescope').load_extension('projections')
+      vim.keymap.set("n", "<leader>fp", function() vim.cmd("Telescope projections") end)
+
+      -- Autostore session on DirChange and VimExit
+      local Session = require("projections.session")
+      vim.api.nvim_create_autocmd({ 'DirChangedPre', 'VimLeavePre' }, {
+        callback = function() Session.store(vim.loop.cwd()) end,
+      })
+    end
+  })
+
   -- sa[wrap] add
   -- sr[wrap] replace
   -- sd[wrap] delete
@@ -295,13 +328,13 @@ return require('packer').startup({ function(use)
     end
   }
 
-  -- TODO: not sure yet
-  use {
-    'phaazon/notisys.nvim',
-    config = function()
-      require 'notisys'.setup()
-    end
-  }
+  -- -- TODO: not sure yet
+  -- use {
+  --   'phaazon/notisys.nvim',
+  --   config = function()
+  --     require 'notisys'.setup()
+  --   end
+  -- }
 
   use {
     'hoob3rt/lualine.nvim',
@@ -400,7 +433,6 @@ return require('packer').startup({ function(use)
           null_ls.builtins.formatting.black,
           null_ls.builtins.formatting.isort,
           null_ls.builtins.code_actions.shellcheck,
-          null_ls.builtins.diagnostics.shellcheck,
           null_ls.builtins.formatting.jq,
         }
       })
