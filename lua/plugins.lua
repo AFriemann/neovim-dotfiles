@@ -160,6 +160,7 @@ return require('packer').startup({ function(use)
     config = function()
       require 'nvim-tree'.setup {
         -- testing
+        disable_netrw = true,
         sync_root_with_cwd = true,
         respect_buf_cwd = true,
         update_focused_file = {
@@ -358,7 +359,17 @@ return require('packer').startup({ function(use)
         options = {
           theme = 'catppuccin',
         },
-        sections = { lualine_a = { json_section } },
+        sections = {
+          lualine_a = {
+            json_section
+          },
+          lualine_c = {
+            {
+              'filename',
+              path = 1,
+            },
+          },
+        },
       }
     end
   }
