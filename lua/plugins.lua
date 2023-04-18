@@ -1,9 +1,13 @@
-local fn = vim.fn
-local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+VIM = vim
 
-if fn.empty(fn.glob(install_path)) > 0 then
-  PackerBootstrap = fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
-  --vim.api.nvim_command 'packadd packer.nvim'
+OPT = VIM.opt
+FN = VIM.fn
+
+local install_path = FN.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+
+if FN.empty(FN.glob(install_path)) > 0 then
+  PackerBootstrap = FN.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
+  --VIM.api.nvim_command 'packadd packer.nvim'
 end
 
 return require('packer').startup({
@@ -16,7 +20,7 @@ return require('packer').startup({
       "catppuccin/nvim",
       as = "catppuccin",
       config = function()
-        vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+        VIM.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
 
         require("catppuccin").setup({
           integrations = {
@@ -30,7 +34,7 @@ return require('packer').startup({
           },
         })
 
-        vim.api.nvim_command "colorscheme catppuccin"
+        VIM.api.nvim_command "colorscheme catppuccin"
       end
     }
 
@@ -62,7 +66,7 @@ return require('packer').startup({
     use {
       'antoinemadec/FixCursorHold.nvim',
       run = function()
-        vim.g.curshold_updatime = 100
+        VIM.g.curshold_updatime = 100
       end,
     }
 
@@ -72,7 +76,7 @@ return require('packer').startup({
     use {
       'FooSoft/vim-argwrap',
       config = function()
-        vim.keymap.set("n", "<leader>a", '<CMD>ArgWrap<CR>')
+        VIM.keymap.set("n", "<leader>a", '<CMD>ArgWrap<CR>')
       end
     }
     use { 'lewis6991/impatient.nvim' }
@@ -134,12 +138,12 @@ return require('packer').startup({
 
         -- Bind <leader>fp to Telescope projections
         require('telescope').load_extension('projections')
-        vim.keymap.set("n", "<leader>fp", function() vim.cmd("Telescope projections") end)
+        VIM.keymap.set("n", "<leader>fp", function() VIM.cmd("Telescope projections") end)
 
         -- Autostore session on DirChange and VimExit
         local Session = require("projections.session")
-        vim.api.nvim_create_autocmd({ 'DirChangedPre', 'VimLeavePre' }, {
-          callback = function() Session.store(vim.loop.cwd()) end,
+        VIM.api.nvim_create_autocmd({ 'DirChangedPre', 'VimLeavePre' }, {
+          callback = function() Session.store(VIM.loop.cwd()) end,
         })
       end
     })
@@ -169,7 +173,51 @@ return require('packer').startup({
         'kyazdani42/nvim-web-devicons', -- optional, for file icon
       },
       config = function()
-        require 'nvim-tree'.setup {
+        local function on_attach(bufnr)
+          local api = require('nvim-tree.api')
+
+          local function opts(desc)
+            return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+          end
+
+          VIM.keymap.set('n', '<CR>', api.node.open.edit, opts('Open'))
+          VIM.keymap.set('n', 'o', api.node.open.edit, opts('Open'))
+          VIM.keymap.set('n', '<2-LeftMouse>', api.node.open.edit, opts('Open'))
+          VIM.keymap.set('n', '<C-v>', api.node.open.vertical, opts('Open: Vertical Split'))
+          VIM.keymap.set('n', '<C-x>', api.node.open.horizontal, opts('Open: Horizontal Split'))
+          VIM.keymap.set('n', '<C-t>', api.node.open.tab, opts('Open: New Tab'))
+          VIM.keymap.set('n', '<', api.node.navigate.sibling.prev, opts('Previous Sibling'))
+          VIM.keymap.set('n', '>', api.node.navigate.sibling.next, opts('Next Sibling'))
+          VIM.keymap.set('n', 'P', api.node.navigate.parent, opts('Parent Directory'))
+          VIM.keymap.set('n', '<BS>', api.node.navigate.parent_close, opts('Close Directory'))
+          VIM.keymap.set('n', 'K', api.node.navigate.sibling.first, opts('First Sibling'))
+          VIM.keymap.set('n', 'J', api.node.navigate.sibling.last, opts('Last Sibling'))
+          VIM.keymap.set('n', 'I', api.tree.toggle_gitignore_filter, opts('Toggle Git Ignore'))
+          VIM.keymap.set('n', 'H', api.tree.toggle_hidden_filter, opts('Toggle Dotfiles'))
+          VIM.keymap.set('n', 'R', api.tree.reload, opts('Refresh'))
+          VIM.keymap.set('n', 'a', api.fs.create, opts('Create'))
+          VIM.keymap.set('n', '<C-d>', api.fs.remove, opts('Delete'))
+          VIM.keymap.set('n', 'D', api.fs.trash, opts('Trash'))
+          VIM.keymap.set('n', 'r', api.fs.rename, opts('Rename'))
+          VIM.keymap.set('n', '<C-r>', api.fs.rename_sub, opts('Rename: Omit Filename'))
+          VIM.keymap.set('n', '<C-x>', api.fs.cut, opts('Cut'))
+          VIM.keymap.set('n', 'c', api.fs.copy.node, opts('Copy'))
+          VIM.keymap.set('n', 'p', api.fs.paste, opts('Paste'))
+          VIM.keymap.set('n', 'y', api.fs.copy.filename, opts('Copy Name'))
+          VIM.keymap.set('n', 'Y', api.fs.copy.relative_path, opts('Copy Relative Path'))
+          VIM.keymap.set('n', 'gy', api.fs.copy.absolute_path, opts('Copy Absolute Path'))
+          VIM.keymap.set('n', '[c', api.node.navigate.git.prev, opts('Prev Git'))
+          VIM.keymap.set('n', ']c', api.node.navigate.git.next, opts('Next Git'))
+          VIM.keymap.set('n', '-', api.tree.change_root_to_parent, opts('Up'))
+          VIM.keymap.set('n', 's', api.node.run.system, opts('Run System'))
+          VIM.keymap.set('n', 'q', api.tree.close, opts('Close'))
+          VIM.keymap.set('n', 'g?', api.tree.toggle_help, opts('Help'))
+          VIM.keymap.set('n', 'W', api.tree.collapse_all, opts('Collapse'))
+          VIM.keymap.set('n', 'S', api.tree.search_node, opts('Search'))
+        end
+
+        require 'nvim-tree'.setup({
+          on_attach = on_attach,
           -- testing
           disable_netrw = true,
           sync_root_with_cwd = true,
@@ -184,50 +232,7 @@ return require('packer').startup({
           diagnostics = {
             enable = true,
           },
-          view = {
-            mappings = {
-              custom_only = true,
-              list = {
-                { key = { "<CR>", "o", "<2-LeftMouse>" }, action = "edit" },
-                --{ key = "<C-e>",                        action = "edit_in_place" },
-                --{ key = {"O"},                          action = "edit_no_picker" },
-                --{ key = {"<2-RightMouse>", "<C-]>"},    action = "cd" },
-                { key = "<C-v>",                          action = "vsplit" },
-                { key = "<C-x>",                          action = "split" },
-                { key = "<C-t>",                          action = "tabnew" },
-                { key = "<",                              action = "prev_sibling" },
-                { key = ">",                              action = "next_sibling" },
-                { key = "P",                              action = "parent_node" },
-                { key = "<BS>",                           action = "close_node" },
-                --{ key = "<Tab>",                        action = "preview" },
-                { key = "K",                              action = "first_sibling" },
-                { key = "J",                              action = "last_sibling" },
-                { key = "I",                              action = "toggle_ignored" },
-                { key = "H",                              action = "toggle_dotfiles" },
-                { key = "R",                              action = "refresh" },
-                { key = "a",                              action = "create" },
-                { key = "<C-d>",                          action = "remove" },
-                { key = "D",                              action = "trash" },
-                { key = "r",                              action = "rename" },
-                { key = "<C-r>",                          action = "full_rename" },
-                { key = "<C-x>",                          action = "cut" },
-                { key = "c",                              action = "copy" },
-                { key = "p",                              action = "paste" },
-                { key = "y",                              action = "copy_name" },
-                { key = "Y",                              action = "copy_path" },
-                { key = "gy",                             action = "copy_absolute_path" },
-                { key = "[c",                             action = "prev_git_item" },
-                { key = "]c",                             action = "next_git_item" },
-                { key = "-",                              action = "dir_up" },
-                { key = "s",                              action = "system_open" },
-                { key = "q",                              action = "close" },
-                { key = "g?",                             action = "toggle_help" },
-                { key = "W",                              action = "collapse_all" },
-                { key = "S",                              action = "search_node" }
-              }
-            }
-          }
-        }
+        })
       end
     }
 
@@ -318,9 +323,10 @@ return require('packer').startup({
             enable = true,
           },
         }
+
         -- autofold ts objects:
-        -- vim.opt.foldmethod = "expr"
-        -- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+        OPT.foldmethod = "expr"
+        OPT.foldexpr = "nvim_treesitter#foldexpr()"
       end,
     }
 
@@ -328,7 +334,7 @@ return require('packer').startup({
     --   'mvllow/modes.nvim',
     --   event = 'BufRead',
     --   config = function()
-    --     vim.opt.cursorline = true
+    --     OPT.cursorline = true
     --     require('modes').setup()
     --   end
     -- })
@@ -339,14 +345,6 @@ return require('packer').startup({
         require('Comment').setup()
       end
     }
-
-    -- -- TODO: not sure yet
-    -- use {
-    --   'phaazon/notisys.nvim',
-    --   config = function()
-    --     require 'notisys'.setup()
-    --   end
-    -- }
 
     use {
       'hoob3rt/lualine.nvim',
@@ -359,7 +357,7 @@ return require('packer').startup({
         local jsonpath = require("jsonpath")
 
         local function json_section()
-          if vim.bo.filetype == "json" then
+          if VIM.bo.filetype == "json" then
             return jsonpath.get()
           else
             return [[]]
@@ -522,7 +520,7 @@ return require('packer').startup({
         -- lsp_lines
         require('lsp_lines').setup()
 
-        vim.lsp.set_log_level("error")
+        VIM.lsp.set_log_level("error")
       end
     }
 
@@ -554,10 +552,11 @@ return require('packer').startup({
         'nvim-lua/plenary.nvim'
       },
       config = function()
-        require('gitsigns').setup {
+        require('gitsigns').setup({
           sign_priority = 0,
-        }
-        vim.opt.signcolumn = "yes"
+        })
+
+        OPT.signcolumn = "yes"
       end
     }
 

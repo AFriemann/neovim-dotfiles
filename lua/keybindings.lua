@@ -1,4 +1,6 @@
-local set_keymap = vim.api.nvim_set_keymap
+VIM = vim
+
+local set_keymap = VIM.api.nvim_set_keymap
 
 set_keymap('n', 'n', 'nzz', { noremap = true, silent = false })
 set_keymap('n', 'N', 'Nzz', { noremap = true, silent = false })
@@ -15,7 +17,7 @@ set_keymap('n', '<S-Tab>', '<cmd>BufferLineCyclePrev<CR>', { noremap = true, sil
 
 set_keymap('n', '<leader>l', ':call v:lua.toggle_diagnostics()<CR>', { noremap = true, silent = true })
 
-vim.api.nvim_create_autocmd('TermEnter', {
+VIM.api.nvim_create_autocmd('TermEnter', {
   pattern = 'term://*toggleterm#*',
   command = 'tnoremap <silent><c-t> <Cmd>exe v:count1 . "ToggleTerm"<CR>'
 })
@@ -23,13 +25,13 @@ vim.api.nvim_create_autocmd('TermEnter', {
 set_keymap('n', '<C-t>', '<cmd>exe v:count1 . "ToggleTerm"<CR>', { noremap = true, silent = true })
 set_keymap('i', '<C-t>', '<esc><cmd>exe v:count1 . "ToggleTerm"<CR>', { noremap = true, silent = true })
 
-vim.g.diagnostics_visible = true
+VIM.g.diagnostics_visible = true
 function _G.toggle_diagnostics()
-  if vim.g.diagnostics_visible then
-    vim.g.diagnostics_visible = false
-    vim.diagnostic.disable()
+  if VIM.g.diagnostics_visible then
+    VIM.g.diagnostics_visible = false
+    VIM.diagnostic.disable()
   else
-    vim.g.diagnostics_visible = true
-    vim.diagnostic.enable()
+    VIM.g.diagnostics_visible = true
+    VIM.diagnostic.enable()
   end
 end

@@ -1,7 +1,7 @@
-local cmd = vim.api.nvim_command
+VIM = vim
 
-vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+VIM.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
   pattern = 'Jenkinsfile',
   command = 'setf groovy',
-  group   = vim.api.nvim_create_augroup("Jenkins", { clear = true }),
+  group   = VIM.api.nvim_create_augroup("Jenkins", { clear = true }),
 })
