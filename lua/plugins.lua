@@ -396,29 +396,8 @@ return require('packer').startup({
     }
 
     use {
-      'VonHeikemen/lsp-zero.nvim',
+      'hrsh7th/nvim-cmp',
       requires = {
-        -- LSP Support
-        { 'neovim/nvim-lspconfig' },
-        { 'williamboman/mason.nvim' },
-        { 'williamboman/mason-lspconfig.nvim' },
-        { 'onsails/lspkind-nvim' },
-        { 'folke/lsp-colors.nvim' },
-        { 'jose-elias-alvarez/null-ls.nvim' },
-        { 'nvim-lua/plenary.nvim' }, -- dependency for null-ls
-
-        -- Utility
-        { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
-        { 'RRethy/vim-illuminate' },
-        { 'j-hui/fidget.nvim' },
-        { 'dnlhc/glance.nvim' },
-        -- { 'simrat39/symbols-outline.nvim' },
-
-        -- Formatting
-        { 'lukas-reineke/lsp-format.nvim' },
-
-        -- Autocompletion
-        { 'hrsh7th/nvim-cmp' },
         { 'hrsh7th/cmp-buffer' },
         { 'hrsh7th/cmp-path' },
         { 'hrsh7th/cmp-nvim-lsp' },
@@ -427,132 +406,123 @@ return require('packer').startup({
         { 'Dosx001/cmp-commit' },
         { 'davidsierradz/cmp-conventionalcommits' },
         { 'ray-x/cmp-treesitter' },
-
-        -- Snippets
-        -- <C-d> next arg
-        -- <C-b> previous arg
-        { 'L3MON4D3/LuaSnip' },
-        { 'saadparwaiz1/cmp_luasnip' },
-        { 'rafamadriz/friendly-snippets' },
-
-        -- Language specific
-        { 'simrat39/rust-tools.nvim' },
+        { 'onsails/lspkind.nvim' },
       },
       config = function()
-        local lsp_zero = require('lsp-zero')
-
-        lsp_zero.preset('recommended')
-        lsp_zero.nvim_workspace()
-
-        local null_ls = require("null-ls")
-        local lsp_lines = require('lsp_lines')
-
-        lsp_zero.preset('recommended')
-        lsp_zero.nvim_workspace()
-
-        lsp_lines.setup()
-        null_ls.setup({
-          sources = {
-            null_ls.builtins.formatting.black,
-            null_ls.builtins.formatting.isort,
-            null_ls.builtins.code_actions.shellcheck,
-            null_ls.builtins.formatting.jq,
-          }
-        })
-
-        local lspformat = require("lsp-format")
-        lsp_zero.on_attach(function(client)
-          lspformat.on_attach(client)
-        end)
-
-        local lspkind = require('lspkind')
-        lspkind.init {
-          mode = "symbol_text",
-          preset = 'default',
-        }
-
         local cmp = require('cmp')
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
-        lsp_zero.setup_nvim_cmp({
-          sources = {
-            { name = 'nvim_lsp' },
-            { name = 'luasnip' },
-            { name = 'buffer' },
-            { name = 'treesitter' },
-          },
-          formatting = {
-            format = lspkind.cmp_format(),
-          },
-          documentation = {
-            border = { '', '', '', ' ', '', '', '', ' ' }, -- remove the obnoxious borders
-          },
-          mapping = lsp_zero.defaults.cmp_mappings({
+        cmp.setup({
+          mapping = cmp.mapping.preset.insert({
             ['<C-Space>'] = cmp.mapping.complete(),
             ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
             ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
             ['<C-e>'] = cmp.mapping.abort(),
             ['<CR>'] = cmp.mapping.confirm({ select = true }),
-          })
-        })
-
-        -- Set configuration for specific filetype.
-        cmp.setup.filetype('gitcommit', {
+          }),
+          formatting  = {
+            format = require('lspkind').cmp_format()
+          },
           sources = cmp.config.sources({
-            { name = 'conventionalcommits' },
-            { name = 'git' },
+    --         { name = 'luasnip' },
+            { name = 'nvim_lsp' },
+            { name = 'treesitter' },
+            { name = 'buffer' },
+            { name = 'path' },
           })
         })
 
         require("cmp_git").setup()
 
-        local rust_lsp = lsp_zero.build_options('rust_analyzer', {})
-
-        lsp_zero.setup()
-
-        -- rust-tools setup
-        local rust_tools = require("rust-tools")
-
-        rust_tools.setup({
-          server = rust_lsp,
-          tools = {
-            inlay_hints = {
-              auto = true,
-              parameter_hints_prefix = " <- ",
-              other_hints_prefix = " => ",
-            },
-          },
+        -- Set configuration for specific filetype.
+        cmp.setup.filetype('gitcommit', {
+          sources = cmp.config.sources({
+            { name = 'conventionalcommits' },
+            { name = 'cmp_git' },
+            { name = 'buffer' },
+          })
         })
 
-        rust_tools.inlay_hints.enable()
+        cmp.setup.cmdline({ '/', '?' }, {
+          mapping = cmp.mapping.preset.cmdline(),
+          sources = {
+            { name = 'buffer' }
+          }
+        })
+      end
+    }
 
-        require("fidget").setup {
+    use {
+      'williamboman/mason.nvim',
+      requires = {
+        { 'williamboman/mason-lspconfig.nvim' },
+        { 'neovim/nvim-lspconfig' },
+        { 'hrsh7th/cmp-nvim-lsp' },
+        { 'j-hui/fidget.nvim' },
+        { 'RRethy/vim-illuminate' },
+        { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
+        { 'hrsh7th/nvim-cmp' },
+        { 'onsails/lspkind.nvim' },
+      },
+      config = function()
+        require('mason').setup()
+
+        require('mason-lspconfig').setup({
+          ensure_installed = {
+            -- Replace these with whatever servers you want to install
+            'rust_analyzer',
+            'tsserver',
+            'tflint',
+            'terraformls',
+            'ansiblels',
+            'bashls',
+            'groovyls',
+            'ruff_lsp',
+            'lua_ls',
+            'cssls',
+          }
+        })
+
+        local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+        local lsp_attach = function(client, bufnr)
+          -- Create your keybindings here...
+        end
+
+        local lspconfig = require('lspconfig')
+        require('mason-lspconfig').setup_handlers({
+          function(server_name)
+            lspconfig[server_name].setup({
+              on_attach = lsp_attach,
+              capabilities = lsp_capabilities,
+            })
+          end,
+        })
+
+        -- lspkind
+        require('lspkind').init {
+          mode = "symbol_text",
+          preset = 'default',
+        }
+
+        -- fidget
+        require('fidget').setup {
           window = {
             blend = 0,
           },
         }
 
         -- illuminate
-        require("illuminate").configure({
+        require('illuminate').configure({
           providers = {
             'lsp',
             'treesitter',
           }
         })
 
-        -- TODO: seems a bit unfinished
-        -- require('glance').setup({
-        --   -- your configuration
-        -- })
-        --
-        -- vim.keymap.set('n', 'gD', '<CMD>Glance definitions<CR>')
-        -- vim.keymap.set('n', 'gR', '<CMD>Glance references<CR>')
-        -- vim.keymap.set('n', 'gY', '<CMD>Glance type_definitions<CR>')
-        -- vim.keymap.set('n', 'gM', '<CMD>Glance implementations<CR>')
+        -- lsp_lines
+        require('lsp_lines').setup()
 
-        -- require("symbols-outline").setup({
-        --   auto_close = true,
-        -- })
+        vim.lsp.set_log_level("error")
       end
     }
 
@@ -560,23 +530,6 @@ return require('packer').startup({
       'weilbith/nvim-code-action-menu',
       cmd = 'CodeActionMenu',
     }
-
-    -- use {
-    --   'RishabhRD/nvim-lsputils',
-    --   requires = {
-    --     'RishabhRD/popfix',
-    --   },
-    --   config = function()
-    --     vim.lsp.handlers['textDocument/codeAction'] = require'lsputil.codeAction'.code_action_handler
-    --     vim.lsp.handlers['textDocument/references'] = require'lsputil.locations'.references_handler
-    --     vim.lsp.handlers['textDocument/definition'] = require'lsputil.locations'.definition_handler
-    --     vim.lsp.handlers['textDocument/declaration'] = require'lsputil.locations'.declaration_handler
-    --     vim.lsp.handlers['textDocument/typeDefinition'] = require'lsputil.locations'.typeDefinition_handler
-    --     vim.lsp.handlers['textDocument/implementation'] = require'lsputil.locations'.implementation_handler
-    --     vim.lsp.handlers['textDocument/documentSymbol'] = require'lsputil.symbols'.document_handler
-    --     vim.lsp.handlers['workspace/symbol'] = require'lsputil.symbols'.workspace_handler
-    --   end
-    -- }
 
     use {
       "folke/trouble.nvim",
@@ -595,14 +548,6 @@ return require('packer').startup({
     }
 
     -- CATEGORY git
-
-    -- use {
-    --   'rhysd/git-messenger.vim',
-    --   config = function()
-    --     vim.g.git_messenger_always_into_popup = true
-    --   end
-    -- }
-    --
     use {
       'lewis6991/gitsigns.nvim',
       requires = {
@@ -615,23 +560,6 @@ return require('packer').startup({
         vim.opt.signcolumn = "yes"
       end
     }
-
-    -- use {
-    --   'f-person/git-blame.nvim',
-    --   config = function()
-    --     vim.g.gitblame_highlight_group = "Question"
-    --   end
-    -- }
-
-    -- use {
-    --   'tanvirtin/vgit.nvim',
-    --   requires = {
-    --     'nvim-lua/plenary.nvim'
-    --   },
-    --   config = function()
-    --     require('vgit').setup()
-    --   end
-    -- }
 
     if PackerBootstrap then
       require('packer').sync()
