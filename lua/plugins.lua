@@ -404,6 +404,7 @@ return require('packer').startup({
         { 'Dosx001/cmp-commit' },
         { 'davidsierradz/cmp-conventionalcommits' },
         { 'ray-x/cmp-treesitter' },
+        { 'joshzcold/cmp-jenkinsfile' },
         { 'onsails/lspkind.nvim' },
       },
       config = function()
@@ -427,7 +428,7 @@ return require('packer').startup({
             { name = 'treesitter' },
             { name = 'buffer' },
             { name = 'path' },
-          })
+          }),
         })
 
         require("cmp_git").setup()
@@ -439,6 +440,17 @@ return require('packer').startup({
             { name = 'cmp_git' },
             { name = 'buffer' },
           })
+        })
+
+        cmp.setup.filetype("Jenkinsfile", {
+          sources = {
+            {
+              name = "jenkinsfile",
+              option = {
+                gdsl_file = "~/.config/nvim/private/jenkins.gdsl"
+              }
+            }
+          }
         })
 
         cmp.setup.cmdline({ '/', '?' }, {
