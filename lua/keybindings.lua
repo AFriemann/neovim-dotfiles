@@ -35,3 +35,16 @@ function _G.toggle_diagnostics()
     VIM.diagnostic.enable()
   end
 end
+
+-- Use LspAttach autocommand to only map the following keys
+-- after the language server attaches to the current buffer
+VIM.api.nvim_create_autocmd('LspAttach', {
+  group = VIM.api.nvim_create_augroup('UserLspConfig', {}),
+  callback = function(ev)
+    local opts = { buffer = ev.buf }
+
+    VIM.keymap.set('n', '<leader>f', function()
+      VIM.lsp.buf.format { async = true }
+    end, opts)
+  end,
+})

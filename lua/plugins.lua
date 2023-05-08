@@ -467,30 +467,32 @@ return require('packer').startup({
       requires = {
         { 'williamboman/mason-lspconfig.nvim' },
         { 'neovim/nvim-lspconfig' },
-        { 'hrsh7th/cmp-nvim-lsp' },
         { 'j-hui/fidget.nvim' },
         { 'RRethy/vim-illuminate' },
         { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
-        { 'hrsh7th/nvim-cmp' },
         { 'onsails/lspkind.nvim' },
+        { 'hrsh7th/nvim-cmp' },
+        { 'hrsh7th/cmp-nvim-lsp' },
       },
       config = function()
         require('mason').setup()
 
         require('mason-lspconfig').setup({
           ensure_installed = {
-            -- Replace these with whatever servers you want to install
-            'rust_analyzer',
-            'tsserver',
-            'tflint',
-            'terraformls',
             'ansiblels',
             'bashls',
-            'groovyls',
-            'ruff_lsp',
-            'lua_ls',
             'cssls',
-          }
+            'dockerls',
+            'groovyls',
+            'json-lsp',
+            'lua_ls',
+            'ruff_lsp',
+            'rust_analyzer',
+            'terraformls',
+            'tflint',
+            'tsserver',
+          },
+          automatic_installation = true,
         })
 
         local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
