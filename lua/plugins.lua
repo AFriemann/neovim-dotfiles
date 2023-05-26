@@ -412,18 +412,18 @@ return require('packer').startup({
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
         cmp.setup({
-          mapping = cmp.mapping.preset.insert({
+          mapping    = cmp.mapping.preset.insert({
             ['<C-Space>'] = cmp.mapping.complete(),
             ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
             ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
             ['<C-e>'] = cmp.mapping.abort(),
             ['<CR>'] = cmp.mapping.confirm({ select = true }),
           }),
-          formatting  = {
+          formatting = {
             format = require('lspkind').cmp_format()
           },
-          sources = cmp.config.sources({
-    --         { name = 'luasnip' },
+          sources    = cmp.config.sources({
+            --         { name = 'luasnip' },
             { name = 'nvim_lsp' },
             { name = 'treesitter' },
             { name = 'buffer' },
@@ -473,6 +473,7 @@ return require('packer').startup({
         { 'onsails/lspkind.nvim' },
         { 'hrsh7th/nvim-cmp' },
         { 'hrsh7th/cmp-nvim-lsp' },
+        { 'lukas-reineke/lsp-format.nvim' },
       },
       config = function()
         require('mason').setup()
@@ -484,8 +485,8 @@ return require('packer').startup({
             'cssls',
             'dockerls',
             'groovyls',
-            'json-lsp',
             'lua_ls',
+            'helm_ls',
             'ruff_lsp',
             'rust_analyzer',
             'terraformls',
@@ -495,12 +496,17 @@ return require('packer').startup({
           automatic_installation = true,
         })
 
+        local lsp_format = require("lsp-format")
+        lsp_format.setup {}
+
         local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
         local lsp_attach = function(client, bufnr)
           -- Create your keybindings here...
+          lsp_format.on_attach(client)
         end
 
         local lspconfig = require('lspconfig')
+
         require('mason-lspconfig').setup_handlers({
           function(server_name)
             lspconfig[server_name].setup({
