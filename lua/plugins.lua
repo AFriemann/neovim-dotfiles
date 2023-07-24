@@ -74,6 +74,13 @@ return require('packer').startup({
 
     -- CATEGORY utility
     use {
+      'echasnovski/mini.align',
+      config = function()
+        require('mini.align').setup()
+      end
+    }
+
+    use {
       'FooSoft/vim-argwrap',
       config = function()
         VIM.keymap.set("n", "<leader>a", '<CMD>ArgWrap<CR>')
@@ -115,38 +122,38 @@ return require('packer').startup({
       end,
     }
 
-    use {
-      'nvim-telescope/telescope.nvim',
-      requires = {
-        'nvim-lua/plenary.nvim',
-      }
-    }
+    -- use {
+    --   'nvim-telescope/telescope.nvim',
+    --   requires = {
+    --     'nvim-lua/plenary.nvim',
+    --   }
+    -- }
 
-    use({
-      'gnikdroy/projections.nvim',
-      requires = {
-        'nvim-telescope/telescope.nvim',
-      },
-      config = function()
-        require("projections").setup({
-          workspaces = {
-            "~/git",
-            "~/work/clark/repositories",
-          },
-          patterns = { ".git" },
-        })
-
-        -- Bind <leader>fp to Telescope projections
-        require('telescope').load_extension('projections')
-        VIM.keymap.set("n", "<leader>fp", function() VIM.cmd("Telescope projections") end)
-
-        -- Autostore session on DirChange and VimExit
-        local Session = require("projections.session")
-        VIM.api.nvim_create_autocmd({ 'DirChangedPre', 'VimLeavePre' }, {
-          callback = function() Session.store(VIM.loop.cwd()) end,
-        })
-      end
-    })
+    -- use({
+    --   'gnikdroy/projections.nvim',
+    --   requires = {
+    --     'nvim-telescope/telescope.nvim',
+    --   },
+    --   config = function()
+    --     require("projections").setup({
+    --       workspaces = {
+    --         "~/git",
+    --         "~/work/clark/repositories",
+    --       },
+    --       patterns = { ".git" },
+    --     })
+    --
+    --     -- Bind <leader>fp to Telescope projections
+    --     require('telescope').load_extension('projections')
+    --     VIM.keymap.set("n", "<leader>fp", function() VIM.cmd("Telescope projections") end)
+    --
+    --     -- Autostore session on DirChange and VimExit
+    --     local Session = require("projections.session")
+    --     VIM.api.nvim_create_autocmd({ 'DirChangedPre', 'VimLeavePre' }, {
+    --       callback = function() Session.store(VIM.loop.cwd()) end,
+    --     })
+    --   end
+    -- })
 
     -- sa[wrap] add
     -- sr[wrap] replace
@@ -394,6 +401,14 @@ return require('packer').startup({
     }
 
     use {
+      'hrsh7th/vim-vsnip',
+      requires = {
+        'hrsh7th/vim-vsnip-integ',
+        'rafamadriz/friendly-snippets',
+      }
+    }
+
+    use {
       'hrsh7th/nvim-cmp',
       requires = {
         { 'hrsh7th/cmp-buffer' },
@@ -406,6 +421,8 @@ return require('packer').startup({
         { 'ray-x/cmp-treesitter' },
         { 'joshzcold/cmp-jenkinsfile' },
         { 'onsails/lspkind.nvim' },
+        { 'hrsh7th/vim-vsnip' },
+        { 'hrsh7th/cmp-vsnip' },
       },
       config = function()
         local cmp = require('cmp')
@@ -425,10 +442,16 @@ return require('packer').startup({
           sources    = cmp.config.sources({
             --         { name = 'luasnip' },
             { name = 'nvim_lsp' },
+            { name = 'vsnip' },
             { name = 'treesitter' },
             { name = 'buffer' },
             { name = 'path' },
           }),
+          snippet    = {
+            expand = function(args)
+              VIM.fn["vsnip#anonymous"](args.body)
+            end,
+          },
         })
 
         require("cmp_git").setup()
@@ -453,12 +476,12 @@ return require('packer').startup({
           }
         })
 
-        cmp.setup.cmdline({ '/', '?' }, {
-          mapping = cmp.mapping.preset.cmdline(),
-          sources = {
-            { name = 'buffer' }
-          }
-        })
+        -- cmp.setup.cmdline({ '/', '?' }, {
+        --   mapping = cmp.mapping.preset.cmdline(),
+        --   sources = {
+        --     { name = 'buffer' }
+        --   }
+        -- })
       end
     }
 
@@ -467,7 +490,10 @@ return require('packer').startup({
       requires = {
         { 'williamboman/mason-lspconfig.nvim' },
         { 'neovim/nvim-lspconfig' },
-        { 'j-hui/fidget.nvim' },
+        {
+          'j-hui/fidget.nvim',
+          tag = 'legacy',
+        },
         { 'RRethy/vim-illuminate' },
         { 'https://git.sr.ht/~whynothugo/lsp_lines.nvim' },
         { 'onsails/lspkind.nvim' },
@@ -506,12 +532,14 @@ return require('packer').startup({
         end
 
         local lspconfig = require('lspconfig')
+        local util = require 'lspconfig.util'
 
         require('mason-lspconfig').setup_handlers({
           function(server_name)
             lspconfig[server_name].setup({
               on_attach = lsp_attach,
               capabilities = lsp_capabilities,
+              root_dir = util.find_git_ancestor
             })
           end,
         })

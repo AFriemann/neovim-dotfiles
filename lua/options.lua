@@ -8,6 +8,7 @@ local indent = 2
 -- the gs
 VIM.g.loaded_python_provider = 0
 VIM.g.python3_host_prog = '/usr/bin/python3'
+VIM.g.python_host_prog = '/usr/bin/python'
 
 -- completion
 --opt.shortmess = VIM.o.shortmess .. "c"        -- don't show completion messages
@@ -32,20 +33,20 @@ opt.scrolloff = 4
 opt.sidescrolloff = 8
 -- behaviour
 opt.wildmode = 'list:longest'
-opt.hidden = true -- enable background buffers
+opt.hidden = true             -- enable background buffers
 opt.clipboard = "unnamedplus" -- copy/paste to system clipboard
-opt.mouse = "a" -- enable mouse support
-opt.history = 100 -- remember n lines in history
-opt.lazyredraw = true -- faster scrolling
-opt.synmaxcol = 2048 -- max column for syntax highlighting
-opt.breakindent = true -- enable break indent
-opt.undofile = true -- save undo history
-opt.updatetime = 250 -- decrease update time
+opt.mouse = "a"               -- enable mouse support
+opt.history = 100             -- remember n lines in history
+opt.lazyredraw = true         -- faster scrolling
+opt.synmaxcol = 2048          -- max column for syntax highlighting
+opt.breakindent = true        -- enable break indent
+opt.undofile = true           -- save undo history
+opt.updatetime = 250          -- decrease update time
 -- indentation
-opt.expandtab = true -- use spaces instead of tabs
-opt.tabstop = indent -- 1 tab == `indent` spaces
-opt.shiftwidth = indent -- shift `indent` spaces when tab
-opt.smartindent = false -- results in faulty indentation
+opt.expandtab = true          -- use spaces instead of tabs
+opt.tabstop = indent          -- 1 tab == `indent` spaces
+opt.shiftwidth = indent       -- shift `indent` spaces when tab
+opt.smartindent = false       -- results in faulty indentation
 opt.autoindent = true
 -- folding
 opt.foldmethod = "expr"
