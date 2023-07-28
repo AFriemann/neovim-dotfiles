@@ -261,6 +261,24 @@ return require('packer').startup({
 
     -- CATEGORY filetypes
     use {
+      'nathom/filetype.nvim',
+      config = function()
+        require("filetype").setup {
+          overrides = {
+            extensions = {
+              pipeline = "groovy.jenkinsfile",
+              tf = "terraform",
+              tfvars = "terraform",
+            },
+            literal = {
+              Jenkinsfile = "groovy.jenkinsfile",
+            },
+          }
+        }
+      end
+    }
+
+    use {
       'mboughaba/i3config.vim',
       ft = { 'i3config' }
     }
@@ -440,7 +458,6 @@ return require('packer').startup({
             format = require('lspkind').cmp_format()
           },
           sources    = cmp.config.sources({
-            --         { name = 'luasnip' },
             { name = 'nvim_lsp' },
             { name = 'vsnip' },
             { name = 'treesitter' },
@@ -465,16 +482,22 @@ return require('packer').startup({
           })
         })
 
-        cmp.setup.filetype("Jenkinsfile", {
-          sources = {
-            {
-              name = "jenkinsfile",
-              option = {
-                gdsl_file = "~/.config/nvim/private/jenkins.gdsl"
-              }
-            }
-          }
-        })
+        -- for ft in { 'Jenkinsfile', 'groovy.jenkinsfile' } do
+        --   cmp.setup.filetype(ft, {
+        --     sources = {
+        --       { name = 'treesitter' },
+        --       { name = 'buffer' },
+        --       { name = 'path' },
+        --       {
+        --         name = "jenkinsfile",
+        --         option = {
+        --           gdsl_file = "~/.config/nvim/private/jenkins.gdsl",
+        --           jenkins_url = "https://jenkins.ci.flfinteche.de",
+        --         }
+        --       }
+        --     }
+        --   })
+        -- end
 
         -- cmp.setup.cmdline({ '/', '?' }, {
         --   mapping = cmp.mapping.preset.cmdline(),
@@ -483,6 +506,12 @@ return require('packer').startup({
         --   }
         -- })
       end
+    }
+
+    use {
+      'ckipp01/nvim-jenkinsfile-linter',
+      ft = { 'Jenkinsfile', 'groovy.jenkinsfile' },
+      requires = { "nvim-lua/plenary.nvim" },
     }
 
     use {
