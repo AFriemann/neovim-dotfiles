@@ -1,21 +1,22 @@
 return {
+  { "Bekaboo/deadcolumn.nvim" },
   {
     "folke/neoconf.nvim",
     opts = {},
   },
-  {
-    "tris203/precognition.nvim",
-    dependencies = { "chrisgrieser/nvim-spider" },
-    opts = {
-      showBlankVirtLine = false,
-      gutterHints = {
-        G = { text = "G", prio = 10 },
-        gg = { text = "gg", prio = 9 },
-        PrevParagraph = { text = "{", prio = 8 },
-        NextParagraph = { text = "}", prio = 8 },
-      },
-    },
-  },
+  -- {
+  --   "tris203/precognition.nvim",
+  --   dependencies = { "chrisgrieser/nvim-spider" },
+  --   opts = {
+  --     showBlankVirtLine = false,
+  --     gutterHints = {
+  --       G = { text = "G", prio = 10 },
+  --       gg = { text = "gg", prio = 9 },
+  --       PrevParagraph = { text = "{", prio = 8 },
+  --       NextParagraph = { text = "}", prio = 8 },
+  --     },
+  --   },
+  -- },
   {
     "chrisgrieser/nvim-spider",
     lazy = true,
@@ -35,12 +36,12 @@ return {
       rocks = { "luautf8" }, -- specifies a list of rocks to install
     },
   },
-  {
-    "wsdjeg/rooter.nvim",
-    config = function()
-      require("rooter").setup({})
-    end,
-  },
+  -- {
+  --   "wsdjeg/rooter.nvim",
+  --   config = function()
+  --     require("rooter").setup({})
+  --   end,
+  -- },
   { "taybart/b64.nvim" },
   { "nicwest/vim-camelsnek" },
   {

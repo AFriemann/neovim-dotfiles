@@ -9,5 +9,21 @@ vim.opt.title = true
 
 vim.lsp.log.set_level("off")
 
+vim.opt.colorcolumn = "120"
+
 -- Native inline completions don't support being shown as regular completions
 -- vim.g.ai_cmp = false
+
+local space = "·"
+vim.opt.listchars:append({
+  -- eol = "$",
+  tab = "·→",
+  -- multispace = space,
+  -- lead = space,
+  trail = space,
+  nbsp = space,
+  extends = "▶",
+  precedes = "◀",
+})
+
+vim.opt.list = true

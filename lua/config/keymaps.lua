@@ -23,3 +23,11 @@ function _G.toggle_diagnostics()
     vim.diagnostic.enable()
   end
 end
+
+vim.keymap.set("t", "<C-w>p", function()
+  require("sidekick.cli").focus({ focus = false })
+end)
+
+vim.keymap.set("t", "<C-w>h", function()
+  require("sidekick.cli").focus({ focus = false })
+end)
